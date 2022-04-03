@@ -1,0 +1,17 @@
+spring:
+  h2:
+    console:
+      enabled: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
