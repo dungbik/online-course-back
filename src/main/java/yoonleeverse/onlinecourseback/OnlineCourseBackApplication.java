@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import yoonleeverse.onlinecourseback.user.entity.AuthorityEntity;
-import yoonleeverse.onlinecourseback.user.entity.UserEntity;
-import yoonleeverse.onlinecourseback.user.repository.UserRepository;
+import yoonleeverse.onlinecourseback.modules.user.entity.AuthorityEntity;
+import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
+import yoonleeverse.onlinecourseback.modules.user.repository.UserRepository;
 
 import java.util.Collections;
 

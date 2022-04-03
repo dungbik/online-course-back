@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.user.entity;
+package yoonleeverse.onlinecourseback.modules.user.entity;
 import org.springframework.security.core.GrantedAuthority;
 
 public enum AuthorityEntity implements GrantedAuthority {

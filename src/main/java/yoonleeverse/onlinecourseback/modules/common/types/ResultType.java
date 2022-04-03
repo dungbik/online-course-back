@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.common.types;
+package yoonleeverse.onlinecourseback.modules.common.types;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

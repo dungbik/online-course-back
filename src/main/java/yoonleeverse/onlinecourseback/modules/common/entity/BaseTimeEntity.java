@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.common.entity;
+package yoonleeverse.onlinecourseback.modules.common.entity;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

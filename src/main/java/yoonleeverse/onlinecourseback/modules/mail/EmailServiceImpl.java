@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.mail;
+package yoonleeverse.onlinecourseback.modules.mail;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

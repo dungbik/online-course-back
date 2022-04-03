@@ -1,10 +1,9 @@
-package yoonleeverse.onlinecourseback.user.types;
+package yoonleeverse.onlinecourseback.modules.user.types;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import yoonleeverse.onlinecourseback.user.entity.UserEntity;
 
 @Data
 @NoArgsConstructor

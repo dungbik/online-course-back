@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.mail;
+package yoonleeverse.onlinecourseback.modules.mail;
 
 public interface EmailService {
 

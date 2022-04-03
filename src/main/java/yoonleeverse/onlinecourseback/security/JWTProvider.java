@@ -8,7 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
-import yoonleeverse.onlinecourseback.user.entity.UserEntity;
+import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import java.util.Date;
 

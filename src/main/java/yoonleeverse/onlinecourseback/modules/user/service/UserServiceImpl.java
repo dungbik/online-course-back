@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.user.service;
+package yoonleeverse.onlinecourseback.modules.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,13 +10,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import yoonleeverse.onlinecourseback.common.types.ResultType;
-import yoonleeverse.onlinecourseback.mail.EmailMessage;
-import yoonleeverse.onlinecourseback.mail.EmailService;
+import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.mail.EmailMessage;
+import yoonleeverse.onlinecourseback.modules.mail.EmailService;
+import yoonleeverse.onlinecourseback.modules.user.types.*;
 import yoonleeverse.onlinecourseback.security.JWTProvider;
-import yoonleeverse.onlinecourseback.user.entity.AuthorityEntity;
-import yoonleeverse.onlinecourseback.user.repository.UserRepository;
-import yoonleeverse.onlinecourseback.user.entity.UserEntity;
+import yoonleeverse.onlinecourseback.modules.user.entity.AuthorityEntity;
+import yoonleeverse.onlinecourseback.modules.user.repository.UserRepository;
+import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 import yoonleeverse.onlinecourseback.user.types.*;
 
 import javax.servlet.http.Cookie;

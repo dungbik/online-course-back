@@ -1,12 +1,11 @@
-package yoonleeverse.onlinecourseback.user.entity;
+package yoonleeverse.onlinecourseback.modules.user.entity;
 
-import com.netflix.dgs.codegen.generated.types.SignUpInput;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import yoonleeverse.onlinecourseback.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 
 import javax.persistence.*;
 import java.util.HashSet;

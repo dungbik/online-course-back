@@ -1,8 +1,8 @@
-package yoonleeverse.onlinecourseback.user.repository;
+package yoonleeverse.onlinecourseback.modules.user.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import yoonleeverse.onlinecourseback.user.entity.UserEntity;
+import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import java.util.Optional;
 

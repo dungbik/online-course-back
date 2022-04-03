@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.user.resolver;
+package yoonleeverse.onlinecourseback.modules.user.resolver;
 
 import com.netflix.graphql.dgs.*;
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData;
@@ -6,11 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.context.request.ServletWebRequest;
-import yoonleeverse.onlinecourseback.common.types.ResultType;
-import yoonleeverse.onlinecourseback.user.service.UserService;
+import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.user.service.UserService;
+import yoonleeverse.onlinecourseback.modules.user.types.*;
 import yoonleeverse.onlinecourseback.user.types.*;
-
-import java.util.List;
 
 @DgsComponent
 @RequiredArgsConstructor

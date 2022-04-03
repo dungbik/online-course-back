@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.user.types;
+package yoonleeverse.onlinecourseback.modules.user.types;
 
 import lombok.Data;
 
