@@ -18,7 +18,6 @@ import yoonleeverse.onlinecourseback.security.JWTProvider;
 import yoonleeverse.onlinecourseback.modules.user.entity.AuthorityEntity;
 import yoonleeverse.onlinecourseback.modules.user.repository.UserRepository;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
-import yoonleeverse.onlinecourseback.user.types.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;

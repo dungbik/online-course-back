@@ -2,7 +2,6 @@ package yoonleeverse.onlinecourseback.modules.user.service;
 
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.user.types.*;
-import yoonleeverse.onlinecourseback.user.types.*;
 
 import javax.servlet.http.HttpServletResponse;
 

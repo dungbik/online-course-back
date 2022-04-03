@@ -9,7 +9,6 @@ import org.springframework.web.context.request.ServletWebRequest;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.user.service.UserService;
 import yoonleeverse.onlinecourseback.modules.user.types.*;
-import yoonleeverse.onlinecourseback.user.types.*;
 
 @DgsComponent
 @RequiredArgsConstructor
