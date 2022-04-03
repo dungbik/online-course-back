@@ -1,5 +1,6 @@
 type Query {
     getUser: UserType
+    getAllTech: [TechType]
 }
 
 type Mutation {
@@ -7,6 +8,7 @@ type Mutation {
     verifyEmail(code: String): ResultType
     signIn(input: SignInInput): SignInResultType
     reIssue: ReIssueResultType
+    addTech(input: AddTechInput): ResultType
 }
 
 type UserType {
@@ -40,6 +42,12 @@ type ReIssueResultType {
     accessToken: String
 }
 
+type TechType {
+    id: ID
+    name: String
+    logo: String
+}
+
 input SignInInput {
     email: String
     password: String
@@ -50,4 +58,9 @@ input SignUpInput {
     email: String
     emailAgreed: Boolean
     password: String
+}
+
+input AddTechInput {
+    name: String
+    logo: String
 }
