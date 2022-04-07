@@ -14,5 +14,6 @@ public class AddCourseInput {
     private Integer price;
     private List<Long> mainTechs;
     private List<String> prerequisite;
+    private List<CategoryInput> videoCategories;
 
 }

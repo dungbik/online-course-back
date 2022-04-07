@@ -61,6 +61,20 @@ type CourseType {
     price: Int
     mainTechs: [TechType]
     prerequisite: [CourseType]
+    videoCategories: [VideoCategoryType]
+}
+
+type VideoCategoryType {
+    categoryId: String
+    title: String
+    videos: [VideoType]
+}
+
+type VideoType {
+    videoId: String
+    title: String
+    time: Int
+    link: String
 }
 
 input SignInInput {
@@ -89,6 +103,18 @@ input AddCourseInput {
     price: Int
     mainTechs: [Long]
     prerequisite: [String]
+    videoCategories: [CategoryInput]
+}
+
+input CategoryInput {
+    title: String
+    videos: [VideoInput]
+}
+
+input VideoInput {
+    title: String
+    time: Int
+    link: String
 }
 
 scalar Long

@@ -4,7 +4,9 @@ import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.types.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,4 +20,6 @@ public interface CourseService {
     Map<String, List<TechType>> techsForCourses(List<String> courseIds);
 
     Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds);
+
+    Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> courseIds);
 }

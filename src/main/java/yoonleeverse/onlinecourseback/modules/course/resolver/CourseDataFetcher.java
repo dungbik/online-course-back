@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
 import org.springframework.security.access.prepost.PreAuthorize;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.PrerequisiteDataLoader;
+import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,10 +23,18 @@ public class CourseDataFetcher {
 
     @DgsData(parentType = "CourseType")
     public CompletableFuture<List<CourseType>> prerequisite(DgsDataFetchingEnvironment dfe) {
-        DataLoader<String, List<CourseType>> PrerequisitesDataLoader = dfe.getDataLoader(PrerequisiteDataLoaderWithContext.class);
+        DataLoader<String, List<CourseType>> PrerequisitesDataLoader = dfe.getDataLoader(PrerequisiteDataLoader.class);
         CourseType course = dfe.getSource();
 
         return PrerequisitesDataLoader.load(course.getCourseId());
+    }
+
+    @DgsData(parentType = "CourseType")
+    public CompletableFuture<List<VideoCategoryType>> videoCategories(DgsDataFetchingEnvironment dfe) {
+        DataLoader<String, List<VideoCategoryType>> videoCategoriesDataLoader = dfe.getDataLoader(VideoCategoryDataLoader.class);
+        CourseType course = dfe.getSource();
+
+        return videoCategoriesDataLoader.load(course.getCourseId());
     }
 
     @DgsQuery

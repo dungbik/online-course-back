@@ -4,17 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseTechEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.PrerequisiteEntity;
-import yoonleeverse.onlinecourseback.modules.course.repository.CourseRepository;
-import yoonleeverse.onlinecourseback.modules.course.repository.CourseTechRepository;
-import yoonleeverse.onlinecourseback.modules.course.repository.PrerequisiteRepository;
-import yoonleeverse.onlinecourseback.modules.course.repository.TechRepository;
+import yoonleeverse.onlinecourseback.modules.course.entity.*;
+import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
-import yoonleeverse.onlinecourseback.modules.course.types.AddCourseInput;
-import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
-import yoonleeverse.onlinecourseback.modules.course.types.TechType;
+import yoonleeverse.onlinecourseback.modules.course.types.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,6 +24,8 @@ public class CourseServiceImpl implements CourseService {
     private final CourseTechRepository courseTechRepository;
     private final TechRepository techRepository;
     private final PrerequisiteRepository prerequisiteRepository;
+    private final VideoCategoryRepository videoCategoryRepository;
+    private final VideoRepository videoRepository;
 
     @Override
     public List<CourseType> getAllCourse() {
@@ -53,21 +48,9 @@ public class CourseServiceImpl implements CourseService {
             CourseEntity course = CourseEntity.makeCourse(input);
             courseRepository.save(course);
 
-            techRepository.findAllByIds(input.getMainTechs()).stream()
-                    .forEach((tech) ->
-                            courseTechRepository.save(CourseTechEntity.builder()
-                                    .course(course)
-                                    .tech(tech)
-                                    .build())
-                    );
-
-            courseRepository.getAllByCourseIdIn(input.getPrerequisite()).stream()
-                    .forEach((requiredCourse) ->
-                        prerequisiteRepository.save(PrerequisiteEntity.builder()
-                                .course(course)
-                                .requiredCourse(requiredCourse)
-                                .build())
-                    );
+            saveMainTechs(input.getMainTechs(), course);
+            savePrerequisites(input.getPrerequisite(), course);
+            saveVideoCategories(input.getVideoCategories(), course);
 
             return ResultType.success();
         } catch (Exception e) {
@@ -75,8 +58,47 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
+    private void saveVideoCategories(List<CategoryInput> videoCategories, CourseEntity course) {
+        videoCategories.stream().forEach((categoryInput) -> {
+            VideoCategoryEntity category = VideoCategoryEntity.builder()
+                    .course(course)
+                    .title(categoryInput.getTitle())
+                    .build();
+            videoCategoryRepository.save(category);
+            categoryInput.getVideos().stream().forEach((videoInput -> {
+                VideoEntity video = VideoEntity.builder()
+                        .category(category)
+                        .title(videoInput.getTitle())
+                        .time(videoInput.getTime())
+                        .link(videoInput.getLink())
+                        .build();
+                videoRepository.save(video);
+            }));
+        });
+    }
+
+    private void savePrerequisites(List<String> ids, CourseEntity course) {
+        courseRepository.getAllByCourseIdIn(ids).stream()
+                .forEach((requiredCourse) ->
+                    prerequisiteRepository.save(PrerequisiteEntity.builder()
+                            .course(course)
+                            .requiredCourse(requiredCourse)
+                            .build())
+                );
+    }
+
+    private void saveMainTechs(List<Long> mainTechs, CourseEntity course) {
+        techRepository.findAllByIds(mainTechs).stream()
+                .forEach((tech) ->
+                        courseTechRepository.save(CourseTechEntity.builder()
+                                .course(course)
+                                .tech(tech)
+                                .build())
+                );
+    }
+
     @Override
-    public Map<String, List<TechType>> techsForCourses(List<String> courseIds) {
+    public Map<String, List<TechType>> techsForCourses(List<String> courseIds) { // todo Refactoring
         return courseIds.stream().map(courseTechRepository::findByCourseId)
                 .collect(Collectors.toMap(
                         i1 -> i1.get(0).getCourse().getCourseId(),
@@ -98,4 +120,18 @@ public class CourseServiceImpl implements CourseService {
 
         return result;
     }
+
+    @Override
+    public Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> courseIds) {
+        Map<String, List<VideoCategoryType>> result = new HashMap<>();
+        courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
+
+        videoCategoryRepository.findAllByCourseIdIn(courseIds).stream()
+                .forEach(videoCategory ->
+                        result.get(videoCategory.getCourse().getCourseId()).add(new VideoCategoryType(videoCategory))
+                );
+
+        return result;
+    }
+
 }

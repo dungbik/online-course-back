@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
 import org.springframework.security.access.prepost.PreAuthorize;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.MainTechDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.TechService;
 import yoonleeverse.onlinecourseback.modules.course.types.AddTechInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
@@ -21,7 +22,7 @@ public class TechDataFetcher {
 
     @DgsData(parentType = "CourseType")
     public CompletableFuture<List<TechType>> mainTechs(DgsDataFetchingEnvironment dfe) {
-        DataLoader<String, List<TechType>> mainTechsDataLoader = dfe.getDataLoader(MainTechDataLoaderWithContext.class);
+        DataLoader<String, List<TechType>> mainTechsDataLoader = dfe.getDataLoader(MainTechDataLoader.class);
         CourseType course = dfe.getSource();
 
         return mainTechsDataLoader.load(course.getCourseId());
