@@ -10,6 +10,9 @@ type Mutation {
     verifyEmail(code: String): ResultType
     signIn(input: SignInInput): SignInResultType
     reIssue: ReIssueResultType
+    updateUser(input: UpdateUserInput): ResultType
+    updateEmail(email: String): ResultType
+    updateAvatar(avatar: String): ResultType
     addTech(input: AddTechInput): ResultType
     addCourse(input: AddCourseInput): ResultType
 }
@@ -115,6 +118,11 @@ input VideoInput {
     title: String
     time: Int
     link: String
+}
+
+input UpdateUserInput {
+    name: String!
+    emailAgreed: Boolean!
 }
 
 scalar Long

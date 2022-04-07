@@ -16,4 +16,10 @@ public interface UserService {
     ResultType verify(String code);
 
     ReIssueResultType reIssue(String refreshToken, HttpServletResponse response);
+
+    ResultType updateUser(UpdateUserInput input);
+
+    ResultType updateEmail(String email);
+
+    ResultType updateAvatar(String avatar);
 }

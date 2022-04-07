@@ -35,12 +35,15 @@ public class UserServiceImpl implements UserService {
     private final JWTProvider jwtProvider;
     private final EmailService emailService;
 
+    public UserEntity currentUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        return (UserEntity) context.getAuthentication().getPrincipal();
+    }
+
     @Override
     @Transactional(readOnly = true)
     public UserType getUser() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        UserEntity user = (UserEntity) context.getAuthentication().getPrincipal();
-        return new UserType(user);
+        return new UserType(currentUser());
     }
 
     @Override
@@ -123,6 +126,53 @@ public class UserServiceImpl implements UserService {
             return ReIssueResultType.success(jwtProvider.createAuthToken(user));
         } catch (Exception e) {
             return ReIssueResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType updateUser(UpdateUserInput input) {
+        try {
+            UserEntity exUser = userRepository.findByEmail(currentUser().getEmail())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+            exUser.updateUser(input);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType updateEmail(String email) {
+        try {
+            UserEntity exUser = userRepository.findByEmail(currentUser().getEmail())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+            exUser.updateEmail(email);
+            emailService.sendEmail(EmailMessage.builder()
+                    .to(exUser.getEmail())
+                    .subject("이메일 인증")
+                    .message(exUser.getVerifyCode())
+                    .build());
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType updateAvatar(String avatar) {
+        try {
+            UserEntity exUser = userRepository.findByEmail(currentUser().getEmail())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+            exUser.updateAvatar(avatar);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
         }
     }
 }

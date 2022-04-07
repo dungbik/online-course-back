@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.user.types.UpdateUserInput;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -61,9 +63,25 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
         }
     }
 
+    public void updateEmail(String email) {
+        this.email = email;
+        this.verifyCode = UUID.randomUUID().toString();
+        this.verified = false;
+    }
+
     public void verifyEmail() {
         this.verified = true;
         this.verifyCode = "";
+    }
+
+    public void updateUser(UpdateUserInput input) {
+        this.name = input.getName();
+        this.emailAgreed = input.getEmailAgreed();
+    }
+
+
+    public void updateAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     @Override
