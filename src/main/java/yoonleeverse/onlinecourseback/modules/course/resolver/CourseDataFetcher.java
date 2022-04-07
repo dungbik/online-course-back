@@ -27,7 +27,6 @@ public class CourseDataFetcher {
     }
 
     @DgsQuery
-    @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
     public List<CourseType> getAllCourse() {
         return courseService.getAllCourse();
     }
