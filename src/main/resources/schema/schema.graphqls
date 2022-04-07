@@ -1,6 +1,7 @@
 type Query {
     getUser: UserType
     getAllTech: [TechType]
+    getAllCourse: [CourseType]
 }
 
 type Mutation {
@@ -9,6 +10,7 @@ type Mutation {
     signIn(input: SignInInput): SignInResultType
     reIssue: ReIssueResultType
     addTech(input: AddTechInput): ResultType
+    addCourse(input: AddCourseInput): ResultType
 }
 
 type UserType {
@@ -48,6 +50,22 @@ type TechType {
     logo: String
 }
 
+type CourseType {
+    courseId: ID
+    title: String
+    subTitle: String
+    logo: String
+    mainColor: String
+    level: String
+    price: Int
+    mainTechs: [TechType]
+}
+
+type SimpleCourseType {
+    courseId: ID
+    title: String
+}
+
 input SignInInput {
     email: String
     password: String
@@ -64,3 +82,15 @@ input AddTechInput {
     name: String
     logo: String
 }
+
+input AddCourseInput {
+    title: String
+    subTitle: String
+    logo: String
+    mainColor: String
+    level: String
+    price: Int
+    mainTechs: [Long]
+}
+
+scalar Long
