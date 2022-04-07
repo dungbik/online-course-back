@@ -13,5 +13,7 @@ public interface CourseService {
 
     ResultType addCourse(AddCourseInput input);
 
+    Map<String, List<TechType>> techsForCourses(List<String> courseIds);
+
     Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds);
 }

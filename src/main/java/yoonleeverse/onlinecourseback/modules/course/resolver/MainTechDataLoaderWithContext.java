@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dataloader.BatchLoaderEnvironment;
 import org.dataloader.MappedBatchLoaderWithContext;
-import yoonleeverse.onlinecourseback.modules.course.service.CourseTechService;
+import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 
 import java.util.ArrayList;
@@ -20,10 +20,10 @@ import java.util.concurrent.CompletionStage;
 @Slf4j
 public class MainTechDataLoaderWithContext implements MappedBatchLoaderWithContext<String, List<TechType>> {
 
-    private final CourseTechService courseTechService;
+    private final CourseService courseService;
 
     @Override
     public CompletionStage<Map<String, List<TechType>>> load(Set<String> keys, BatchLoaderEnvironment environment) {
-        return CompletableFuture.supplyAsync(() -> courseTechService.techsForCourses(new ArrayList<>(keys)));
+        return CompletableFuture.supplyAsync(() -> courseService.techsForCourses(new ArrayList<>(keys)));
     }
 }

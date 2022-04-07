@@ -71,6 +71,17 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public Map<String, List<TechType>> techsForCourses(List<String> courseIds) {
+        return courseIds.stream().map(courseTechRepository::findByCourseId)
+                .collect(Collectors.toMap(
+                        i1 -> i1.get(0).getCourse().getCourseId(),
+                        i2 -> i2.stream()
+                                .map((ct) -> new TechType(ct.getTech()))
+                                .collect(Collectors.toList()))
+                );
+    }
+
+    @Override
     public Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds) {
         Map<String, List<CourseType>> result = new HashMap<>();
         courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
