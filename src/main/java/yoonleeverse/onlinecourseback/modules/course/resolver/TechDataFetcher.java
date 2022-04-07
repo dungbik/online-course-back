@@ -21,10 +21,10 @@ public class TechDataFetcher {
 
     @DgsData(parentType = "CourseType")
     public CompletableFuture<List<TechType>> mainTechs(DgsDataFetchingEnvironment dfe) {
-        DataLoader<String, List<TechType>> reviewsDataLoader = dfe.getDataLoader(MainTechDataLoaderWithContext.class);
+        DataLoader<String, List<TechType>> mainTechsDataLoader = dfe.getDataLoader(MainTechDataLoaderWithContext.class);
         CourseType course = dfe.getSource();
 
-        return reviewsDataLoader.load(course.getCourseId());
+        return mainTechsDataLoader.load(course.getCourseId());
     }
 
     @DgsQuery

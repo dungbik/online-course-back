@@ -18,7 +18,7 @@ import java.util.concurrent.CompletionStage;
 @DgsDataLoader(name = "mainTechs")
 @RequiredArgsConstructor
 @Slf4j
-class MainTechDataLoaderWithContext implements MappedBatchLoaderWithContext<String, List<TechType>> {
+public class MainTechDataLoaderWithContext implements MappedBatchLoaderWithContext<String, List<TechType>> {
 
     private final CourseTechService courseTechService;
 

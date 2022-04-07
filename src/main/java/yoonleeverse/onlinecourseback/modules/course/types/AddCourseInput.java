@@ -13,5 +13,6 @@ public class AddCourseInput {
     private String level;
     private Integer price;
     private List<Long> mainTechs;
+    private List<String> prerequisite;
 
 }

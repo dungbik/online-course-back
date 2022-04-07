@@ -6,14 +6,20 @@ import org.springframework.transaction.annotation.Transactional;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseTechEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.PrerequisiteEntity;
 import yoonleeverse.onlinecourseback.modules.course.repository.CourseRepository;
 import yoonleeverse.onlinecourseback.modules.course.repository.CourseTechRepository;
+import yoonleeverse.onlinecourseback.modules.course.repository.PrerequisiteRepository;
 import yoonleeverse.onlinecourseback.modules.course.repository.TechRepository;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
+import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +30,7 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final CourseTechRepository courseTechRepository;
     private final TechRepository techRepository;
+    private final PrerequisiteRepository prerequisiteRepository;
 
     @Override
     public List<CourseType> getAllCourse() {
@@ -49,9 +56,30 @@ public class CourseServiceImpl implements CourseService {
                                     .build())
                     );
 
+            courseRepository.getAllByCourseIdIn(input.getPrerequisite()).stream()
+                    .forEach((requiredCourse) ->
+                        prerequisiteRepository.save(PrerequisiteEntity.builder()
+                                .course(course)
+                                .requiredCourse(requiredCourse)
+                                .build())
+                    );
+
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.toString());
         }
+    }
+
+    @Override
+    public Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds) {
+        Map<String, List<CourseType>> result = new HashMap<>();
+        courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
+
+        prerequisiteRepository.findAllByCourseIdIn(courseIds).stream()
+                .forEach(obj ->
+                    result.get((String) obj[0]).add(new CourseType((CourseEntity) obj[1]))
+                );
+
+        return result;
     }
 }

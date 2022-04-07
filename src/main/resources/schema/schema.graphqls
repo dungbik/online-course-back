@@ -59,11 +59,7 @@ type CourseType {
     level: String
     price: Int
     mainTechs: [TechType]
-}
-
-type SimpleCourseType {
-    courseId: ID
-    title: String
+    prerequisite: [CourseType]
 }
 
 input SignInInput {
@@ -91,6 +87,7 @@ input AddCourseInput {
     level: String
     price: Int
     mainTechs: [Long]
+    prerequisite: [String]
 }
 
 scalar Long
