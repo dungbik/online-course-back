@@ -31,6 +31,11 @@ public class CourseDataFetcher {
         return courseService.getAllCourse();
     }
 
+    @DgsQuery
+    public CourseType getCourse(@InputArgument String courseId) {
+        return courseService.getCourse(courseId);
+    }
+
     @DgsMutation
     @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
     public ResultType addCourse(@InputArgument AddCourseInput input) {

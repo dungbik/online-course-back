@@ -11,6 +11,8 @@ import java.util.Map;
 public interface CourseService {
     List<CourseType> getAllCourse();
 
+    CourseType getCourse(String courseId);
+
     ResultType addCourse(AddCourseInput input);
 
     Map<String, List<TechType>> techsForCourses(List<String> courseIds);

@@ -2,6 +2,7 @@ type Query {
     getUser: UserType
     getAllTech: [TechType]
     getAllCourse: [CourseType]
+    getCourse(courseId: String): CourseType
 }
 
 type Mutation {

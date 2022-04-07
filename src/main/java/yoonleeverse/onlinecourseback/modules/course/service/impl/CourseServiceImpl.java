@@ -40,6 +40,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public CourseType getCourse(String courseId) {
+        return new CourseType(courseRepository.findByCourseId(courseId));
+    }
+
+    @Override
     public ResultType addCourse(AddCourseInput input) {
         try {
             if (courseRepository.existsByTitle(input.getTitle()))
