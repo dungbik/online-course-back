@@ -10,6 +10,7 @@ import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +39,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseType getCourse(String courseId) {
-        return new CourseType(courseRepository.findByCourseId(courseId));
+        CourseEntity exCourse = courseRepository.findByCourseId(courseId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
+
+        return new CourseType(exCourse);
     }
 
     @Override
@@ -139,6 +143,30 @@ public class CourseServiceImpl implements CourseService {
                 );
 
         return result;
+    }
+
+    @Override
+    public ResultType updateCourse(UpdateCourseInput input) {
+        try {
+            CourseEntity exCourse = courseRepository.findByCourseId(input.getCourseId())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
+
+            exCourse.updateCourse(input);
+
+            // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
+            courseTechRepository.deleteAllByCourse(exCourse);
+            prerequisiteRepository.deleteAllByCourse(exCourse);
+            videoRepository.deleteAllByCategoryIn(videoCategoryRepository.findAllByCourseId(exCourse.getCourseId()));
+            videoCategoryRepository.deleteAllByCourse(exCourse);
+
+            saveMainTechs(input.getMainTechs(), exCourse);
+            savePrerequisites(input.getPrerequisite(), exCourse);
+            saveVideoCategories(input.getVideoCategories(), exCourse);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
     }
 
 }

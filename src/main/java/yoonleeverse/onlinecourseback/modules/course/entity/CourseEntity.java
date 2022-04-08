@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -47,5 +48,14 @@ public class CourseEntity extends BaseTimeEntity {
                 .level(LevelEnum.valueOf(input.getLevel()))
                 .price(input.getPrice())
                 .build();
+    }
+
+    public void updateCourse(UpdateCourseInput input) {
+        this.title = input.getTitle();
+        this.subTitle = input.getSubTitle();
+        this.logo = input.getLogo();
+        this.mainColor = input.getMainColor();
+        this.level = LevelEnum.valueOf(input.getLevel());
+        this.price = input.getPrice();
     }
 }

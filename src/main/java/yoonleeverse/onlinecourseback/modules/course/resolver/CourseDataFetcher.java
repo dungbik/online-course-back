@@ -11,6 +11,7 @@ import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
+import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -53,4 +54,9 @@ public class CourseDataFetcher {
         return courseService.addCourse(input);
     }
 
+    @DgsMutation
+    @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
+    public ResultType updateCourse(@InputArgument UpdateCourseInput input) {
+        return courseService.updateCourse(input);
+    }
 }

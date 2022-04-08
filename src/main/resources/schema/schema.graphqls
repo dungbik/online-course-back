@@ -17,6 +17,7 @@ type Mutation {
     addTech(input: AddTechInput): ResultType
     removeTech(id: Long): ResultType
     addCourse(input: AddCourseInput): ResultType
+    updateCourse(input: UpdateCourseInput): ResultType
 }
 
 type UserType {
@@ -125,6 +126,19 @@ input VideoInput {
 input UpdateUserInput {
     name: String!
     emailAgreed: Boolean!
+}
+
+input UpdateCourseInput {
+    courseId: String
+    title: String
+    subTitle: String
+    logo: String
+    mainColor: String
+    level: String
+    price: Int
+    mainTechs: [Long]
+    prerequisite: [String]
+    videoCategories: [CategoryInput]
 }
 
 scalar Long
