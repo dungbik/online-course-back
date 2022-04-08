@@ -59,4 +59,10 @@ public class CourseDataFetcher {
     public ResultType updateCourse(@InputArgument UpdateCourseInput input) {
         return courseService.updateCourse(input);
     }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
+    public ResultType removeCourse(@InputArgument String courseId) {
+        return courseService.removeCourse(courseId);
+    }
 }

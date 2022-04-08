@@ -24,4 +24,6 @@ public interface CourseService {
     Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> courseIds);
 
     ResultType updateCourse(UpdateCourseInput input);
+
+    ResultType removeCourse(String courseId);
 }

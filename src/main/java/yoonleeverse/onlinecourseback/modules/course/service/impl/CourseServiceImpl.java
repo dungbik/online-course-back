@@ -154,14 +154,33 @@ public class CourseServiceImpl implements CourseService {
             exCourse.updateCourse(input);
 
             // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
-            courseTechRepository.deleteAllByCourse(exCourse);
-            prerequisiteRepository.deleteAllByCourse(exCourse);
-            videoRepository.deleteAllByCategoryIn(videoCategoryRepository.findAllByCourseId(exCourse.getCourseId()));
-            videoCategoryRepository.deleteAllByCourse(exCourse);
+            removeCourse(exCourse);
 
             saveMainTechs(input.getMainTechs(), exCourse);
             savePrerequisites(input.getPrerequisite(), exCourse);
             saveVideoCategories(input.getVideoCategories(), exCourse);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    public void removeCourse(CourseEntity course) {
+        courseTechRepository.deleteAllByCourse(course);
+        prerequisiteRepository.deleteAllByCourse(course);
+        videoRepository.deleteAllByCategoryIn(videoCategoryRepository.findAllByCourseId(course.getCourseId()));
+        videoCategoryRepository.deleteAllByCourse(course);
+    }
+
+    @Override
+    public ResultType removeCourse(String courseId) {
+        try {
+            CourseEntity exCourse = courseRepository.findByCourseId(courseId)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
+
+            removeCourse(exCourse);
+            courseRepository.delete(exCourse);
 
             return ResultType.success();
         } catch (Exception e) {

@@ -18,6 +18,7 @@ type Mutation {
     removeTech(id: Long): ResultType
     addCourse(input: AddCourseInput): ResultType
     updateCourse(input: UpdateCourseInput): ResultType
+    removeCourse(courseId: String): ResultType
 }
 
 type UserType {
