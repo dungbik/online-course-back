@@ -2,6 +2,7 @@ package yoonleeverse.onlinecourseback.modules.course.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
 import yoonleeverse.onlinecourseback.modules.course.repository.TechRepository;
@@ -14,11 +15,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TechServiceImpl implements TechService {
 
     private final TechRepository techRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<TechType> getAllTech() {
         return techRepository.findAll().stream()
                 .map(TechType::new)
