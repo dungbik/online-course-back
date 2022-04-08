@@ -13,6 +13,7 @@ type Mutation {
     updateUser(input: UpdateUserInput): ResultType
     updateEmail(email: String): ResultType
     updateAvatar(avatar: String): ResultType
+    removeUser: ResultType
     addTech(input: AddTechInput): ResultType
     addCourse(input: AddCourseInput): ResultType
 }

@@ -67,4 +67,10 @@ public class UserResolver {
     public ResultType updateAvatar(@InputArgument String avatar) {
         return userService.updateAvatar(avatar);
     }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType removeUser() {
+        return userService.removeUser();
+    }
 }

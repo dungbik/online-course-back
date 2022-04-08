@@ -175,4 +175,21 @@ public class UserServiceImpl implements UserService {
             return ResultType.fail(e.getMessage());
         }
     }
+
+    @Override
+    public ResultType removeUser() {
+        try {
+            UserEntity exUser = userRepository.findByEmail(currentUser().getEmail())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
+
+            if (exUser.getAuthorities().contains(AuthorityEntity.ROLE_ADMIN))
+                throw new RuntimeException("관리자 계정은 삭제할 수 없습니다.");
+
+            userRepository.delete(exUser);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
 }

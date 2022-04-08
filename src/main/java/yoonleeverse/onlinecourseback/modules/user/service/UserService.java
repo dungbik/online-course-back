@@ -22,4 +22,6 @@ public interface UserService {
     ResultType updateEmail(String email);
 
     ResultType updateAvatar(String avatar);
+
+    ResultType removeUser();
 }
