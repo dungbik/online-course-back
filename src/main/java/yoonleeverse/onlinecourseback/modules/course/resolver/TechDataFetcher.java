@@ -39,4 +39,10 @@ public class TechDataFetcher {
     public ResultType addTech(@InputArgument AddTechInput input) {
         return techService.addTech(input);
     }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
+    public ResultType removeTech(@InputArgument Long id) {
+        return techService.removeTech(id);
+    }
 }

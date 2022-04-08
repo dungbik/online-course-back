@@ -15,6 +15,7 @@ type Mutation {
     updateAvatar(avatar: String): ResultType
     removeUser: ResultType
     addTech(input: AddTechInput): ResultType
+    removeTech(id: Long): ResultType
     addCourse(input: AddCourseInput): ResultType
 }
 

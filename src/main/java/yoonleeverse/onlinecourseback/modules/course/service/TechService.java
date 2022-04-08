@@ -11,4 +11,6 @@ public interface TechService {
     List<TechType> getAllTech();
 
     ResultType addTech(AddTechInput input);
+
+    ResultType removeTech(Long id);
 }

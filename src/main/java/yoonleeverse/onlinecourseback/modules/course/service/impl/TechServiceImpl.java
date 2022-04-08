@@ -10,7 +10,6 @@ import yoonleeverse.onlinecourseback.modules.course.types.AddTechInput;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +34,19 @@ public class TechServiceImpl implements TechService {
             TechEntity tech = TechEntity.makeTech(input);
             techRepository.save(tech);
 
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType removeTech(Long id) {
+        try {
+            TechEntity exTech = techRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 기술입니다."));
+
+            techRepository.delete(exTech);
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.getMessage());
