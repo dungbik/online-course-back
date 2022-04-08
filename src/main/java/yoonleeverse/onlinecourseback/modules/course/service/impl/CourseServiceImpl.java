@@ -1,6 +1,8 @@
 package yoonleeverse.onlinecourseback.modules.course.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
@@ -8,9 +10,8 @@ import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
-import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
-import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
-import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.*;
+import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +30,12 @@ public class CourseServiceImpl implements CourseService {
     private final PrerequisiteRepository prerequisiteRepository;
     private final VideoCategoryRepository videoCategoryRepository;
     private final VideoRepository videoRepository;
+    private final CommentRepository commentRepository;
+
+    public UserEntity currentUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        return (UserEntity) context.getAuthentication().getPrincipal();
+    }
 
     @Override
     public List<CourseType> getAllCourse() {
@@ -186,6 +193,71 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
             return ResultType.fail(e.getMessage());
         }
+    }
+
+    @Override
+    public ResultType addComment(AddCommentInput input) {
+        try {
+            VideoEntity exVideo = videoRepository.findByVideoId(input.getVideoId())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 동영상입니다."));
+
+            input.setWriter(currentUser());
+            input.setVideo(exVideo);
+            CommentEntity comment = CommentEntity.makeComment(input);
+
+            commentRepository.save(comment);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType updateComment(UpdateCommentInput input) {
+        try {
+            CommentEntity exComment = commentRepository.findByCommentId(input.getCommentId())
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 댓글입니다."));
+
+            if (exComment.getWriter() != currentUser())
+                throw new RuntimeException("댓글 작성자가 아닙니다.");
+
+            exComment.updateComment(input.getContent());
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType removeComment(String commentId) {
+        try {
+            CommentEntity exComment = commentRepository.findByCommentId(commentId)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 댓글입니다."));
+
+            if (exComment.getWriter() != currentUser())
+                throw new RuntimeException("댓글 작성자가 아닙니다.");
+
+            commentRepository.delete(exComment);
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public List<CommentType> getAllComment(String videoId) {
+        VideoEntity exVideo = videoRepository.findByVideoId(videoId)
+                .orElse(null);
+
+        if (exVideo == null)
+            return new ArrayList<>();
+
+        return commentRepository.findAllByVideo(exVideo).stream()
+                .map(CommentType::new)
+                .collect(Collectors.toList());
     }
 
 }

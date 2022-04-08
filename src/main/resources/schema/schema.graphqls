@@ -3,6 +3,7 @@ type Query {
     getAllTech: [TechType]
     getAllCourse: [CourseType]
     getCourse(courseId: String): CourseType
+    getAllComment(videoId: String): [CommentType]
 }
 
 type Mutation {
@@ -19,6 +20,9 @@ type Mutation {
     addCourse(input: AddCourseInput): ResultType
     updateCourse(input: UpdateCourseInput): ResultType
     removeCourse(courseId: String): ResultType
+    addComment(input: AddCommentInput): ResultType
+    updateComment(input: UpdateCommentInput): ResultType
+    removeComment(commentId: String): ResultType
 }
 
 type UserType {
@@ -84,6 +88,13 @@ type VideoType {
     link: String
 }
 
+type CommentType {
+    commentId: String
+    writer: String
+    content: String
+    parentId: String
+}
+
 input SignInInput {
     email: String
     password: String
@@ -140,6 +151,17 @@ input UpdateCourseInput {
     mainTechs: [Long]
     prerequisite: [String]
     videoCategories: [CategoryInput]
+}
+
+input AddCommentInput {
+    videoId: String
+    parentId: String
+    content: String
+}
+
+input UpdateCommentInput {
+    commentId: String
+    content: String
 }
 
 scalar Long

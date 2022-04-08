@@ -8,9 +8,12 @@ import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.PrerequisiteDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
+import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
+import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
 import java.util.List;
@@ -48,6 +51,11 @@ public class CourseDataFetcher {
         return courseService.getCourse(courseId);
     }
 
+    @DgsQuery
+    public List<CommentType> getAllComment(@InputArgument String videoId) {
+        return courseService.getAllComment(videoId);
+    }
+
     @DgsMutation
     @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
     public ResultType addCourse(@InputArgument AddCourseInput input) {
@@ -64,5 +72,23 @@ public class CourseDataFetcher {
     @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
     public ResultType removeCourse(@InputArgument String courseId) {
         return courseService.removeCourse(courseId);
+    }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType addComment(@InputArgument AddCommentInput input) {
+        return courseService.addComment(input);
+    }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType updateComment(@InputArgument UpdateCommentInput input) {
+        return courseService.updateComment(input);
+    }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType removeComment(@InputArgument String commentId) {
+        return courseService.removeComment(commentId);
     }
 }

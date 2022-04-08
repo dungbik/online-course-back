@@ -5,8 +5,11 @@ import yoonleeverse.onlinecourseback.modules.course.entity.VideoCategoryEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface VideoRepository extends JpaRepository<VideoEntity, Long> {
 
     void deleteAllByCategoryIn(List<VideoCategoryEntity> categories);
+
+    Optional<VideoEntity> findByVideoId(String videoId);
 }
