@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
+import yoonleeverse.onlinecourseback.modules.course.repository.CourseTechRepository;
 import yoonleeverse.onlinecourseback.modules.course.repository.TechRepository;
 import yoonleeverse.onlinecourseback.modules.course.service.TechService;
 import yoonleeverse.onlinecourseback.modules.course.types.AddTechInput;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class TechServiceImpl implements TechService {
 
     private final TechRepository techRepository;
+    private final CourseTechRepository courseTechRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -50,6 +52,8 @@ public class TechServiceImpl implements TechService {
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 기술입니다."));
 
             techRepository.delete(exTech);
+            courseTechRepository.deleteAllByTech(exTech);
+
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.getMessage());
