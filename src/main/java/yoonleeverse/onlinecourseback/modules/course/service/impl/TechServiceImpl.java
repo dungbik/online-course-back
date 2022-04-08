@@ -8,7 +8,7 @@ import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
 import yoonleeverse.onlinecourseback.modules.course.repository.CourseTechRepository;
 import yoonleeverse.onlinecourseback.modules.course.repository.TechRepository;
 import yoonleeverse.onlinecourseback.modules.course.service.TechService;
-import yoonleeverse.onlinecourseback.modules.course.types.AddTechInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddTechInput;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 
 import java.util.List;

@@ -8,7 +8,7 @@ import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.PrerequisiteDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
-import yoonleeverse.onlinecourseback.modules.course.types.AddCourseInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 

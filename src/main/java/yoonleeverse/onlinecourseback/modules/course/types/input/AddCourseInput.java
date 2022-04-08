@@ -1,4 +1,4 @@
-package yoonleeverse.onlinecourseback.modules.course.types;
+package yoonleeverse.onlinecourseback.modules.course.types.input;
 
 import lombok.Data;
 

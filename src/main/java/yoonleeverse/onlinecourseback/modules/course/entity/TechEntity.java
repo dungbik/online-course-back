@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
-import yoonleeverse.onlinecourseback.modules.course.types.AddTechInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddTechInput;
 
 import javax.persistence.*;
 

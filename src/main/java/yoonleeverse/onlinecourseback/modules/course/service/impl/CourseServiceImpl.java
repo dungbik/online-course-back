@@ -8,6 +8,8 @@ import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
