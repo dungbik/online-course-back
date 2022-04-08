@@ -98,17 +98,21 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public Map<String, List<TechType>> techsForCourses(List<String> courseIds) { // todo Refactoring
-        return courseIds.stream().map(courseTechRepository::findByCourseId)
-                .collect(Collectors.toMap(
-                        i1 -> i1.get(0).getCourse().getCourseId(),
-                        i2 -> i2.stream()
-                                .map((ct) -> new TechType(ct.getTech()))
-                                .collect(Collectors.toList()))
+    @Transactional(readOnly = true)
+    public Map<String, List<TechType>> techsForCourses(List<String> courseIds) {
+        Map<String, List<TechType>> result = new HashMap<>();
+        courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
+
+        courseTechRepository.findAllByCourseIdIn(courseIds).stream()
+                .forEach(obj ->
+                    result.get((String) obj[0]).add(new TechType((TechEntity) obj[1]))
                 );
+
+        return result;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds) {
         Map<String, List<CourseType>> result = new HashMap<>();
         courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
@@ -122,6 +126,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> courseIds) {
         Map<String, List<VideoCategoryType>> result = new HashMap<>();
         courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
