@@ -43,10 +43,7 @@ type SignInResultType {
 
     accessToken: String
 
-    name: String
-    email: String
-    emailAgreed: Boolean
-    avatar: String
+    user: UserType
 }
 
 type ReIssueResultType {

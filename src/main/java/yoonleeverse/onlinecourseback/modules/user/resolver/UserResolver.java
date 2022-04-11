@@ -4,12 +4,9 @@ import com.netflix.graphql.dgs.*;
 import com.netflix.graphql.dgs.internal.DgsWebMvcRequestData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.context.request.ServletWebRequest;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
-import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 import yoonleeverse.onlinecourseback.modules.user.service.UserService;
 import yoonleeverse.onlinecourseback.modules.user.types.*;
 

@@ -16,16 +16,13 @@ public class SignInResultType {
 
     private String accessToken;
 
-    private String name;
-    private String email;
-    private Boolean emailAgreed;
-    private String avatar;
+    private UserType user;
 
     public static SignInResultType success(String accessToken, UserEntity user) {
         return new SignInResultType(
                 true, null,
                 accessToken,
-                user.getName(), user.getEmail(), user.getEmailAgreed(), user.getAvatar());
+                new UserType(user.getName(), user.getEmail(), user.getEmailAgreed(), user.getAvatar()));
     }
 
     public static SignInResultType fail(String error) {
