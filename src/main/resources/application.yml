@@ -15,3 +15,6 @@ spring:
           timeout: 5000
           starttls:
             enable: true
+
+server:
+  port: 8000
