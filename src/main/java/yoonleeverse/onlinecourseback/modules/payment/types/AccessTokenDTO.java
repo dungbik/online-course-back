@@ -12,9 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class AccessTokenDTO implements Serializable {
 
-    @JsonProperty("access_token")
     private String accessToken;
     private Long now;
-    @JsonProperty("expired_at")
     private Long expiredAt;
 }
