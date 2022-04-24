@@ -1,27 +1,12 @@
 type Query {
-    getPayments: [PaymentType]
 }
 
 type Mutation {
-    payment(input: PaymentInput): ResultType
 }
 
 type ResultType {
     success: Boolean
     error: String
-}
-
-type PaymentType {
-    amount: Int
-    status: String
-    course: CourseType
-}
-
-input PaymentInput {
-    courseId: String
-    impUid: String
-    merchantUid: Long
-    amount: Int
 }
 
 scalar Long
