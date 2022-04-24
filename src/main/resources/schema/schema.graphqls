@@ -5,6 +5,7 @@ type Query {
     getCourse(courseId: String): CourseType
     getAllComment(videoId: String): [CommentType]
     getPayments: [PaymentType]
+    getVideo(videoId: String!): VideoType
 }
 
 type Mutation {

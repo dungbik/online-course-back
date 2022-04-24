@@ -1,5 +1,7 @@
 package yoonleeverse.onlinecourseback.modules.course.service.impl;
 
+import graphql.GraphQLException;
+import graphql.GraphqlErrorException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,12 +13,11 @@ import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.*;
+import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
+import yoonleeverse.onlinecourseback.modules.payment.repository.PaymentRepository;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,6 +32,7 @@ public class CourseServiceImpl implements CourseService {
     private final VideoCategoryRepository videoCategoryRepository;
     private final VideoRepository videoRepository;
     private final CommentRepository commentRepository;
+    private final PaymentRepository paymentRepository;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -81,6 +83,7 @@ public class CourseServiceImpl implements CourseService {
             categoryInput.getVideos().stream().forEach((videoInput -> {
                 VideoEntity video = VideoEntity.builder()
                         .category(category)
+                        .course(course)
                         .title(videoInput.getTitle())
                         .time(videoInput.getTime())
                         .link(videoInput.getLink())
@@ -258,6 +261,21 @@ public class CourseServiceImpl implements CourseService {
         return commentRepository.findAllByVideo(exVideo).stream()
                 .map(CommentType::new)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public VideoType getVideo(String videoId) {
+        VideoEntity exVideo = videoRepository.findByVideoId(videoId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
+
+        Integer price = exVideo.getCourse().getPrice(); // todo null이 저장되지 않게 처리
+        if (price == null || price > 0) {
+            Optional<PaymentEntity> paymentHistory = paymentRepository.findByUserAndCourse(currentUser(), exVideo.getCourse());
+            if (!paymentHistory.isPresent())
+                throw new RuntimeException("구매하지 않은 강의입니다.");
+        }
+
+        return VideoType.of(exVideo);
     }
 
 }

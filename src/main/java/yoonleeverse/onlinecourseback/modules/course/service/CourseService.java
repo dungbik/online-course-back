@@ -1,12 +1,9 @@
 package yoonleeverse.onlinecourseback.modules.course.service;
 
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
-import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
+import yoonleeverse.onlinecourseback.modules.course.types.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
-import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
-import yoonleeverse.onlinecourseback.modules.course.types.TechType;
-import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
@@ -37,4 +34,6 @@ public interface CourseService {
     ResultType removeComment(String commentId);
 
     List<CommentType> getAllComment(String videoId);
+
+    VideoType getVideo(String videoId);
 }
