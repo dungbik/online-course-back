@@ -102,7 +102,9 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public ResultType payment(PaymentInput input) {
         try {
-            PaymentEntity payment = PaymentEntity.builder().user(currentUser())
+            UserEntity user = currentUser();
+
+            PaymentEntity payment = PaymentEntity.builder().user(user)
                     .merchantUid(input.getMerchantUid())
                     .impUid(Long.parseLong(input.getImpUid().substring(4)))
                     .status(PaymentStatus.PENDING)
@@ -125,13 +127,20 @@ public class PaymentServiceImpl implements PaymentService {
             CourseEntity course = courseRepository.findByCourseId(input.getCourseId())
                     .orElseThrow(() -> new RuntimeException(String.format(
                             "userId: %s, courseId: %s는 존재하지 않는 강의입니다.",
-                            currentUser().getUserId(), input.getCourseId()))
+                            user.getUserId(), input.getCourseId()))
                     );
+
+            PaymentEntity paymentHistory = paymentRepository.findByUserAndCourse(user, course).orElse(null);
+            if (paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
+                throw new RuntimeException(String.format(
+                        "userId: %s, courseId: %s는 결제된 강의입니다.",
+                        user.getUserId(), input.getCourseId())
+                );
 
             if (payments.getAmount() != course.getPrice())
                 throw new RuntimeException(String.format(
                         "userId: %s, courseId: %s는 가격이 변조되었습니다.",
-                        currentUser().getUserId(), input.getCourseId())
+                        user.getUserId(), input.getCourseId())
                 );
 
             return ResultType.success();
