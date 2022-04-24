@@ -4,6 +4,7 @@ type Query {
     getAllCourse: [CourseType]
     getCourse(courseId: String): CourseType
     getAllComment(videoId: String): [CommentType]
+    getPayments: [PaymentType]
 }
 
 type Mutation {
@@ -23,6 +24,7 @@ type Mutation {
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
     removeComment(commentId: String): ResultType
+    payment(input: PaymentInput): ResultType
 }
 
 type UserType {
@@ -92,6 +94,12 @@ type CommentType {
     parentId: String
 }
 
+type PaymentType {
+    amount: Int
+    status: String
+    course: CourseType
+}
+
 input SignInInput {
     email: String
     password: String
@@ -159,6 +167,13 @@ input AddCommentInput {
 input UpdateCommentInput {
     commentId: String
     content: String
+}
+
+input PaymentInput {
+    courseId: String
+    impUid: String
+    merchantUid: Long
+    amount: Int
 }
 
 scalar Long
