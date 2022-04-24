@@ -4,6 +4,7 @@ type Query {
     getAllCourse: [CourseType]
     getCourse(courseId: String): CourseType
     getAllComment(videoId: String): [CommentType]
+    getPayments: [PaymentType]
 }
 
 type Mutation {
@@ -91,6 +92,12 @@ type CommentType {
     writer: String
     content: String
     parentId: String
+}
+
+type PaymentType {
+    amount: Int
+    status: String
+    course: CourseType
 }
 
 input SignInInput {

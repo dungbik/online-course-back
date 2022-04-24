@@ -18,13 +18,12 @@ import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentStatus;
 import yoonleeverse.onlinecourseback.modules.payment.repository.AccessTokenRedisRepository;
 import yoonleeverse.onlinecourseback.modules.payment.repository.PaymentRepository;
-import yoonleeverse.onlinecourseback.modules.payment.types.AccessTokenDTO;
-import yoonleeverse.onlinecourseback.modules.payment.types.ApiResponseDTO;
-import yoonleeverse.onlinecourseback.modules.payment.types.PaymentInput;
-import yoonleeverse.onlinecourseback.modules.payment.types.PaymentsDTO;
+import yoonleeverse.onlinecourseback.modules.payment.types.*;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -98,6 +97,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             return paymentInfo.getBody().getResponse();
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(String.format("userId: %s, impUid: %s의 결제 내역 가져오기 실패", currentUser().getUserId(), impUid));
         }
     }
@@ -131,11 +131,6 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             UserEntity user = currentUser();
 
-            PaymentEntity payment = PaymentEntity.makePayment(user, input);
-            paymentRepository.save(payment);
-
-            String accessToken = getToken();
-            PaymentsDTO payments = getPayments(accessToken, input.getImpUid());
             CourseEntity course = courseRepository.findByCourseId(input.getCourseId())
                     .orElseThrow(() -> new RuntimeException(String.format(
                             "userId: %s, courseId: %s는 존재하지 않는 강의입니다.",
@@ -145,11 +140,17 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentEntity paymentHistory = paymentRepository.findByUserAndCourse(user, course)
                     .orElse(null);
 
-            if (paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
+            if (paymentHistory != null && paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
                 throw new RuntimeException(String.format(
                         "userId: %s, courseId: %s는 결제된 강의입니다.",
                         user.getUserId(), input.getCourseId())
                 );
+
+            PaymentEntity payment = PaymentEntity.makePayment(user, course, input);
+            paymentRepository.save(payment);
+
+            String accessToken = getToken();
+            PaymentsDTO payments = getPayments(accessToken, input.getImpUid());
 
             if (input.getAmount() != payments.getAmount())
                 throw new RuntimeException(String.format(
@@ -164,5 +165,14 @@ public class PaymentServiceImpl implements PaymentService {
             log.error(e.getMessage());
             return ResultType.fail(e.getMessage());
         }
+    }
+
+    /**
+     * todo CourseType은 DataLoader로 처리되게
+     */
+    @Override
+    public List<PaymentType> getPayments() {
+        return paymentRepository.findAllByUser(currentUser()).stream()
+                .map(PaymentType::new).collect(Collectors.toList());
     }
 }

@@ -47,9 +47,10 @@ public class PaymentEntity extends BaseTimeEntity {
         this.status = PaymentStatus.SUCCESS;
     }
 
-    public static PaymentEntity makePayment(UserEntity user, PaymentInput input) {
+    public static PaymentEntity makePayment(UserEntity user, CourseEntity course, PaymentInput input) {
         return PaymentEntity.builder()
                 .user(user)
+                .course(course)
                 .merchantUid(input.getMerchantUid())
                 .impUid(Long.parseLong(input.getImpUid().substring(4)))
                 .status(PaymentStatus.PENDING)
