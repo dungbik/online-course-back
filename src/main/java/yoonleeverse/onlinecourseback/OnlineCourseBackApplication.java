@@ -1,13 +1,10 @@
 package yoonleeverse.onlinecourseback;
 
-import graphql.language.StringValue;
-import graphql.schema.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -17,7 +14,7 @@ import yoonleeverse.onlinecourseback.modules.user.repository.UserRepository;
 
 import java.util.Collections;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = { RedisRepositoriesAutoConfiguration.class })
 @EnableJpaAuditing
 public class OnlineCourseBackApplication {
 

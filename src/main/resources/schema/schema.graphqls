@@ -23,6 +23,7 @@ type Mutation {
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
     removeComment(commentId: String): ResultType
+    payment(input: PaymentInput): ResultType
 }
 
 type UserType {
@@ -159,6 +160,12 @@ input AddCommentInput {
 input UpdateCommentInput {
     commentId: String
     content: String
+}
+
+input PaymentInput {
+    courseId: String
+    impUid: String
+    merchantUid: Long
 }
 
 scalar Long
