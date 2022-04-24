@@ -9,6 +9,7 @@ import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.Prerequ
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
@@ -54,6 +55,11 @@ public class CourseDataFetcher {
     @DgsQuery
     public List<CommentType> getAllComment(@InputArgument String videoId) {
         return courseService.getAllComment(videoId);
+    }
+
+    @DgsQuery
+    public VideoType getVideo(@InputArgument String videoId) {
+        return courseService.getVideo(videoId);
     }
 
     @DgsMutation

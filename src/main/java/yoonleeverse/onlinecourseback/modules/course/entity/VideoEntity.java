@@ -25,6 +25,10 @@ public class VideoEntity extends BaseTimeEntity {
     @JoinColumn(name = "category_id")
     private VideoCategoryEntity category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private CourseEntity course;
+
     @Column(unique = true, nullable = false)
     private String videoId;
 
