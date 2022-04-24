@@ -6,8 +6,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:default}
+    password: ${MAIL_PASSWORD:default}
     properties:
       mail:
         smtp:
@@ -17,8 +17,8 @@ spring:
             enable: true
 
   redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
 
 server:
   port: 8000
@@ -29,5 +29,5 @@ logging:
 
 config:
   imp:
-    key: ${IMP_KEY}
-    secret: ${IMP_SECRET}
+    key: ${IMP_KEY:test}
+    secret: ${IMP_SECRET:test}
