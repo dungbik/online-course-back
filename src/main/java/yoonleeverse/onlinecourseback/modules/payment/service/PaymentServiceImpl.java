@@ -48,7 +48,7 @@ public class PaymentServiceImpl implements PaymentService {
         return (UserEntity) context.getAuthentication().getPrincipal();
     }
 
-    private AccessTokenDTO getToken() {
+    private AccessTokenDTO callToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -67,6 +67,21 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (Exception e) {
             throw new RuntimeException("accessToken 가져오기 실패");
         }
+    }
+
+    private String getToken() {
+        String accessToken = accessTokenRepository.getToken();
+
+        if (accessToken == null) {
+            AccessTokenDTO accessTokenDTO = callToken();
+            accessToken = accessTokenDTO.getAccessToken();
+            if (accessToken == null)
+                throw new RuntimeException("accessToken is null");
+
+            accessTokenRepository.setToken(accessTokenDTO);
+        }
+
+        return accessToken;
     }
 
     private PaymentsDTO getPayments(String accessToken, String impUid) {
@@ -99,30 +114,27 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Async
+    public void successPayment(Long merchantUid) {
+        try {
+            PaymentEntity payment = paymentRepository.findByMerchantUid(merchantUid)
+                    .orElseThrow(() -> new RuntimeException(
+                            String.format("merchantUid: %ld는 존재하지 않는 거래내역입니다.", merchantUid)));
+            payment.cancel();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
+    }
+
     @Override
     public ResultType payment(PaymentInput input) {
         try {
             UserEntity user = currentUser();
 
-            PaymentEntity payment = PaymentEntity.builder().user(user)
-                    .merchantUid(input.getMerchantUid())
-                    .impUid(Long.parseLong(input.getImpUid().substring(4)))
-                    .status(PaymentStatus.PENDING)
-                    .build();
-
+            PaymentEntity payment = PaymentEntity.makePayment(user, input);
             paymentRepository.save(payment);
 
-            String accessToken = accessTokenRepository.getToken();
-
-            if (accessToken == null) {
-                AccessTokenDTO accessTokenDTO = getToken();
-                accessToken = accessTokenDTO.getAccessToken();
-                if (accessToken == null)
-                    throw new RuntimeException("accessToken is null");
-
-                accessTokenRepository.setToken(accessTokenDTO);
-            }
-
+            String accessToken = getToken();
             PaymentsDTO payments = getPayments(accessToken, input.getImpUid());
             CourseEntity course = courseRepository.findByCourseId(input.getCourseId())
                     .orElseThrow(() -> new RuntimeException(String.format(
@@ -130,19 +142,22 @@ public class PaymentServiceImpl implements PaymentService {
                             user.getUserId(), input.getCourseId()))
                     );
 
-            PaymentEntity paymentHistory = paymentRepository.findByUserAndCourse(user, course).orElse(null);
+            PaymentEntity paymentHistory = paymentRepository.findByUserAndCourse(user, course)
+                    .orElse(null);
+
             if (paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
                 throw new RuntimeException(String.format(
                         "userId: %s, courseId: %s는 결제된 강의입니다.",
                         user.getUserId(), input.getCourseId())
                 );
 
-            if (payments.getAmount() != course.getPrice())
+            if (input.getAmount() != payments.getAmount())
                 throw new RuntimeException(String.format(
                         "userId: %s, courseId: %s는 가격이 변조되었습니다.",
                         user.getUserId(), input.getCourseId())
                 );
 
+            successPayment(input.getMerchantUid());
             return ResultType.success();
         } catch (Exception e) {
             cancelPayment(input.getMerchantUid());

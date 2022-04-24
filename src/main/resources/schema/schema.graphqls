@@ -166,6 +166,7 @@ input PaymentInput {
     courseId: String
     impUid: String
     merchantUid: Long
+    amount: Int
 }
 
 scalar Long

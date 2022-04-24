@@ -8,4 +8,5 @@ public class PaymentInput {
     private String courseId;
     private String impUid; // 결제 번호
     private Long merchantUid; // 주문 번호
+    private Integer amount;
 }

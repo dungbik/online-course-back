@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
+import yoonleeverse.onlinecourseback.modules.payment.types.PaymentInput;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import javax.persistence.*;
@@ -36,7 +37,23 @@ public class PaymentEntity extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
 
+    private Integer amount;
+
     public void cancel() {
         this.status = PaymentStatus.FAIL;
+    }
+
+    public void success() {
+        this.status = PaymentStatus.SUCCESS;
+    }
+
+    public static PaymentEntity makePayment(UserEntity user, PaymentInput input) {
+        return PaymentEntity.builder()
+                .user(user)
+                .merchantUid(input.getMerchantUid())
+                .impUid(Long.parseLong(input.getImpUid().substring(4)))
+                .status(PaymentStatus.PENDING)
+                .amount(input.getAmount())
+                .build();
     }
 }
