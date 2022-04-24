@@ -14,7 +14,5 @@ public class VideoType {
     public VideoType(VideoEntity video) {
         this.videoId = video.getVideoId();
         this.title = video.getTitle();
-        this.time = video.getTime();
-        this.link = video.getLink();
     }
 }
