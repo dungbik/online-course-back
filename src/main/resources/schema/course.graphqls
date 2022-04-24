@@ -1,0 +1,109 @@
+extend type Query {
+    getAllTech: [TechType]
+    getAllCourse: [CourseType]
+    getCourse(courseId: String): CourseType
+    getAllComment(videoId: String): [CommentType]
+    getVideo(videoId: String!): VideoType
+}
+
+extend type Mutation {
+    addTech(input: AddTechInput): ResultType
+    removeTech(id: Long): ResultType
+    addCourse(input: AddCourseInput): ResultType
+    updateCourse(input: UpdateCourseInput): ResultType
+    removeCourse(courseId: String): ResultType
+    addComment(input: AddCommentInput): ResultType
+    updateComment(input: UpdateCommentInput): ResultType
+    removeComment(commentId: String): ResultType
+}
+
+type TechType {
+    id: ID
+    name: String
+    logo: String
+}
+
+type CourseType {
+    courseId: ID
+    title: String
+    subTitle: String
+    logo: String
+    mainColor: String
+    level: String
+    price: Int
+    mainTechs: [TechType]
+    prerequisite: [CourseType]
+    videoCategories: [VideoCategoryType]
+}
+
+type VideoCategoryType {
+    categoryId: String
+    title: String
+    videos: [VideoType]
+}
+
+type VideoType {
+    videoId: String
+    title: String
+    time: Int
+    link: String
+}
+
+type CommentType {
+    commentId: String
+    writer: String
+    content: String
+    parentId: String
+}
+
+input AddTechInput {
+    name: String
+    logo: String
+}
+
+input AddCourseInput {
+    title: String
+    subTitle: String
+    logo: String
+    mainColor: String
+    level: String
+    price: Int
+    mainTechs: [Long]
+    prerequisite: [String]
+    videoCategories: [CategoryInput]
+}
+
+input CategoryInput {
+    title: String
+    videos: [VideoInput]
+}
+
+input VideoInput {
+    title: String
+    time: Int
+    link: String
+}
+
+input UpdateCourseInput {
+    courseId: String
+    title: String
+    subTitle: String
+    logo: String
+    mainColor: String
+    level: String
+    price: Int
+    mainTechs: [Long]
+    prerequisite: [String]
+    videoCategories: [CategoryInput]
+}
+
+input AddCommentInput {
+    videoId: String
+    parentId: String
+    content: String
+}
+
+input UpdateCommentInput {
+    commentId: String
+    content: String
+}

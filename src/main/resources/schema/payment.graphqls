@@ -1,0 +1,20 @@
+extend type Query {
+    getPayments: [PaymentType]
+}
+
+extend type Mutation {
+    payment(input: PaymentInput): ResultType
+}
+
+type PaymentType {
+    amount: Int
+    status: String
+    course: CourseType
+}
+
+input PaymentInput {
+    courseId: String
+    impUid: String
+    merchantUid: Long
+    amount: Int
+}
