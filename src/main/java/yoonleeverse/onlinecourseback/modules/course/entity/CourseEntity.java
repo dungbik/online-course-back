@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
@@ -22,10 +23,9 @@ public class CourseEntity extends BaseTimeEntity {
     @GeneratedValue
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String courseId;
-
     private String title;
+
+    private String slug;
 
     private String subTitle;
 
@@ -40,8 +40,8 @@ public class CourseEntity extends BaseTimeEntity {
 
     public static CourseEntity makeCourse(AddCourseInput input) {
         return CourseEntity.builder()
-                .courseId(UUID.randomUUID().toString())
                 .title(input.getTitle())
+                .slug(StringUtil.toSlug(input.getTitle()))
                 .subTitle(input.getSubTitle())
                 .logo(input.getLogo())
                 .mainColor(input.getMainColor())
@@ -52,6 +52,7 @@ public class CourseEntity extends BaseTimeEntity {
 
     public void updateCourse(UpdateCourseInput input) {
         this.title = input.getTitle();
+        this.slug = StringUtil.toSlug(input.getTitle());
         this.subTitle = input.getSubTitle();
         this.logo = input.getLogo();
         this.mainColor = input.getMainColor();

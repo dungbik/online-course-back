@@ -47,8 +47,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public CourseType getCourse(String courseId) {
-        CourseEntity exCourse = courseRepository.findByCourseId(courseId)
+    public CourseType getCourse(String slug) {
+        CourseEntity exCourse = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
         return new CourseType(exCourse);
@@ -93,8 +93,8 @@ public class CourseServiceImpl implements CourseService {
         });
     }
 
-    private void savePrerequisites(List<String> ids, CourseEntity course) {
-        courseRepository.getAllByCourseIdIn(ids).stream()
+    private void savePrerequisites(List<String> slugs, CourseEntity course) {
+        courseRepository.getAllBySlugIn(slugs).stream()
                 .forEach((requiredCourse) ->
                     prerequisiteRepository.save(PrerequisiteEntity.builder()
                             .course(course)
@@ -115,11 +115,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, List<TechType>> techsForCourses(List<String> courseIds) {
+    public Map<String, List<TechType>> techsForCourses(List<String> slugs) {
         Map<String, List<TechType>> result = new HashMap<>();
-        courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
+        slugs.forEach((id) -> result.put(id, new ArrayList<>()));
 
-        courseTechRepository.findAllByCourseIdIn(courseIds).stream()
+        courseTechRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
                     result.get((String) obj[0]).add(new TechType((TechEntity) obj[1]))
                 );
@@ -129,11 +129,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds) {
+    public Map<String, List<CourseType>> prerequisitesForCourses(List<String> slugs) {
         Map<String, List<CourseType>> result = new HashMap<>();
-        courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
+        slugs.forEach((slug) -> result.put(slug, new ArrayList<>()));
 
-        prerequisiteRepository.findAllByCourseIdIn(courseIds).stream()
+        prerequisiteRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
                     result.get((String) obj[0]).add(new CourseType((CourseEntity) obj[1]))
                 );
@@ -143,13 +143,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional(readOnly = true)
-    public Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> courseIds) {
+    public Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs) {
         Map<String, List<VideoCategoryType>> result = new HashMap<>();
-        courseIds.forEach((id) -> result.put(id, new ArrayList<>()));
+        slugs.forEach((slug) -> result.put(slug, new ArrayList<>()));
 
-        videoCategoryRepository.findAllByCourseIdIn(courseIds).stream()
+        videoCategoryRepository.findAllBySlugIn(slugs).stream()
                 .forEach(videoCategory ->
-                        result.get(videoCategory.getCourse().getCourseId()).add(new VideoCategoryType(videoCategory))
+                        result.get(videoCategory.getCourse().getSlug()).add(new VideoCategoryType(videoCategory))
                 );
 
         return result;
@@ -158,7 +158,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public ResultType updateCourse(UpdateCourseInput input) {
         try {
-            CourseEntity exCourse = courseRepository.findByCourseId(input.getCourseId())
+            CourseEntity exCourse = courseRepository.findBySlug(input.getSlug())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
             exCourse.updateCourse(input);
@@ -179,14 +179,14 @@ public class CourseServiceImpl implements CourseService {
     public void removeCourse(CourseEntity course) {
         courseTechRepository.deleteAllByCourse(course);
         prerequisiteRepository.deleteAllByCourse(course);
-        videoRepository.deleteAllByCategoryIn(videoCategoryRepository.findAllByCourseId(course.getCourseId()));
+        videoRepository.deleteAllByCategoryIn(videoCategoryRepository.findAllBySlug(course.getSlug()));
         videoCategoryRepository.deleteAllByCourse(course);
     }
 
     @Override
-    public ResultType removeCourse(String courseId) {
+    public ResultType removeCourse(String slug) {
         try {
-            CourseEntity exCourse = courseRepository.findByCourseId(courseId)
+            CourseEntity exCourse = courseRepository.findBySlug(slug)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
             removeCourse(exCourse);

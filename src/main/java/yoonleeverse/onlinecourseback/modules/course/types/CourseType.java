@@ -6,7 +6,7 @@ import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
 @Data
 public class CourseType {
 
-    private String courseId;
+    private String slug;
     private String title;
     private String subTitle;
     private String logo;
@@ -15,7 +15,7 @@ public class CourseType {
     private Integer price;
 
     public CourseType(CourseEntity course) {
-        this.courseId = course.getCourseId();
+        this.slug = course.getSlug();
         this.title = course.getTitle();
         this.subTitle = course.getSubTitle();
         this.logo = course.getLogo();

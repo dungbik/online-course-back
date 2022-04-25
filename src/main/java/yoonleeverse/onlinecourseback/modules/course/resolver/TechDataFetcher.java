@@ -25,7 +25,7 @@ public class TechDataFetcher {
         DataLoader<String, List<TechType>> mainTechsDataLoader = dfe.getDataLoader(MainTechDataLoader.class);
         CourseType course = dfe.getSource();
 
-        return mainTechsDataLoader.load(course.getCourseId());
+        return mainTechsDataLoader.load(course.getSlug());
     }
 
     @DgsQuery

@@ -13,15 +13,15 @@ import java.util.Map;
 public interface CourseService {
     List<CourseType> getAllCourse();
 
-    CourseType getCourse(String courseId);
+    CourseType getCourse(String slug);
 
     ResultType addCourse(AddCourseInput input);
 
-    Map<String, List<TechType>> techsForCourses(List<String> courseIds);
+    Map<String, List<TechType>> techsForCourses(List<String> slugs);
 
-    Map<String, List<CourseType>> prerequisitesForCourses(List<String> courseIds);
+    Map<String, List<CourseType>> prerequisitesForCourses(List<String> slugs);
 
-    Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> courseIds);
+    Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs);
 
     ResultType updateCourse(UpdateCourseInput input);
 

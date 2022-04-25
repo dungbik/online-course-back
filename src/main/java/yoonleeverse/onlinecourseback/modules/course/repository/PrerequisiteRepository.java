@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface PrerequisiteRepository extends JpaRepository<PrerequisiteEntity, Long> {
 
-    @Query("SELECT p.course.courseId, p.requiredCourse FROM PrerequisiteEntity p " +
+    @Query("SELECT p.course.slug, p.requiredCourse FROM PrerequisiteEntity p " +
             "JOIN p.course " +
             "JOIN p.requiredCourse " +
-            "WHERE p.course.courseId IN (:courseIds)")
-    List<Object[]> findAllByCourseIdIn(List<String> courseIds);
+            "WHERE p.course.slug IN (:slugs)")
+    List<Object[]> findAllBySlugIn(List<String> slugs);
 
     void deleteAllByCourse(CourseEntity course);
 }

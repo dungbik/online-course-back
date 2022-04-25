@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface CourseTechRepository extends JpaRepository<CourseTechEntity, Long> {
 
-    @Query("SELECT ct.course.courseId, ct.tech FROM CourseTechEntity ct " +
+    @Query("SELECT ct.course.slug, ct.tech FROM CourseTechEntity ct " +
             "JOIN ct.tech " +
             "JOIN ct.course " +
-            "WHERE ct.course.courseId IN (:courseIds)")
-    List<Object[]> findAllByCourseIdIn(List<String> courseIds);
+            "WHERE ct.course.slug IN (:slugs)")
+    List<Object[]> findAllBySlugIn(List<String> slugs);
 
     void deleteAllByTech(TechEntity tech);
 

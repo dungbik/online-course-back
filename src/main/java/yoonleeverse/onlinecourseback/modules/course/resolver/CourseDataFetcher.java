@@ -31,7 +31,7 @@ public class CourseDataFetcher {
         DataLoader<String, List<CourseType>> PrerequisitesDataLoader = dfe.getDataLoader(PrerequisiteDataLoader.class);
         CourseType course = dfe.getSource();
 
-        return PrerequisitesDataLoader.load(course.getCourseId());
+        return PrerequisitesDataLoader.load(course.getSlug());
     }
 
     @DgsData(parentType = "CourseType")
@@ -39,7 +39,7 @@ public class CourseDataFetcher {
         DataLoader<String, List<VideoCategoryType>> videoCategoriesDataLoader = dfe.getDataLoader(VideoCategoryDataLoader.class);
         CourseType course = dfe.getSource();
 
-        return videoCategoriesDataLoader.load(course.getCourseId());
+        return videoCategoriesDataLoader.load(course.getSlug());
     }
 
     @DgsQuery
@@ -48,8 +48,8 @@ public class CourseDataFetcher {
     }
 
     @DgsQuery
-    public CourseType getCourse(@InputArgument String courseId) {
-        return courseService.getCourse(courseId);
+    public CourseType getCourse(@InputArgument String slug) {
+        return courseService.getCourse(slug);
     }
 
     @DgsQuery
@@ -76,8 +76,8 @@ public class CourseDataFetcher {
 
     @DgsMutation
     @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
-    public ResultType removeCourse(@InputArgument String courseId) {
-        return courseService.removeCourse(courseId);
+    public ResultType removeCourse(@InputArgument String slug) {
+        return courseService.removeCourse(slug);
     }
 
     @DgsMutation

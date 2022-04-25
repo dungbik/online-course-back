@@ -131,10 +131,10 @@ public class PaymentServiceImpl implements PaymentService {
         try {
             UserEntity user = currentUser();
 
-            CourseEntity course = courseRepository.findByCourseId(input.getCourseId())
+            CourseEntity course = courseRepository.findBySlug(input.getSlug())
                     .orElseThrow(() -> new RuntimeException(String.format(
-                            "userId: %s, courseId: %s는 존재하지 않는 강의입니다.",
-                            user.getUserId(), input.getCourseId()))
+                            "userId: %s, slug: %s는 존재하지 않는 강의입니다.",
+                            user.getUserId(), input.getSlug()))
                     );
 
             PaymentEntity paymentHistory = paymentRepository.findByUserAndCourse(user, course)
@@ -142,8 +142,8 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (paymentHistory != null && paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
                 throw new RuntimeException(String.format(
-                        "userId: %s, courseId: %s는 결제된 강의입니다.",
-                        user.getUserId(), input.getCourseId())
+                        "userId: %s, slug: %s는 결제된 강의입니다.",
+                        user.getUserId(), input.getSlug())
                 );
 
             PaymentEntity payment = PaymentEntity.makePayment(user, course, input);
@@ -154,8 +154,8 @@ public class PaymentServiceImpl implements PaymentService {
 
             if (input.getAmount() != payments.getAmount())
                 throw new RuntimeException(String.format(
-                        "userId: %s, courseId: %s는 가격이 변조되었습니다.",
-                        user.getUserId(), input.getCourseId())
+                        "userId: %s, slug: %s는 가격이 변조되었습니다.",
+                        user.getUserId(), input.getSlug())
                 );
 
             successPayment(input.getMerchantUid());

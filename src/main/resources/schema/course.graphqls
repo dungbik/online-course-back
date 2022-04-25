@@ -1,7 +1,7 @@
 extend type Query {
     getAllTech: [TechType]
     getAllCourse: [CourseType]
-    getCourse(courseId: String): CourseType
+    getCourse(slug: String): CourseType
     getAllComment(videoId: String): [CommentType]
     getVideo(videoId: String!): VideoType
 }
@@ -11,7 +11,7 @@ extend type Mutation {
     removeTech(id: Long): ResultType
     addCourse(input: AddCourseInput): ResultType
     updateCourse(input: UpdateCourseInput): ResultType
-    removeCourse(courseId: String): ResultType
+    removeCourse(slug: String): ResultType
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
     removeComment(commentId: String): ResultType
@@ -24,8 +24,8 @@ type TechType {
 }
 
 type CourseType {
-    courseId: ID
     title: String
+    slug: String
     subTitle: String
     logo: String
     mainColor: String
@@ -85,7 +85,7 @@ input VideoInput {
 }
 
 input UpdateCourseInput {
-    courseId: String
+    slug: String
     title: String
     subTitle: String
     logo: String
