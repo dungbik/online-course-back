@@ -25,9 +25,32 @@ server:
 
 logging:
   level:
-    yoonleeverse.onlinecourseback: debug
+    yoonleeverse:
+      onlinecourseback: debug
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
 
 config:
   imp:
     key: ${IMP_KEY:test}
     secret: ${IMP_SECRET:test}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY:default}
+      secretKey: ${AWS_SECRET_KEY:default}
+    s3:
+      bucket: ${S3_BUCKET:default}
+    region:
+      static: ${AWS_REGION:default}
+    stack:
+      auto: false
+
+com:
+  amazonaws:
+    sdk:
+      disableEc2Metadata: true
