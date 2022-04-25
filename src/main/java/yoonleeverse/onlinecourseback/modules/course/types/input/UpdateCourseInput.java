@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class UpdateCourseInput {
-    private String courseId;
+    private String slug;
     private String title;
     private String subTitle;
     private String logo;

@@ -13,7 +13,7 @@ type PaymentType {
 }
 
 input PaymentInput {
-    courseId: String
+    slug: String
     impUid: String
     merchantUid: Long
     amount: Int

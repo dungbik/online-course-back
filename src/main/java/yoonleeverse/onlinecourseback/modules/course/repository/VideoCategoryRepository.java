@@ -12,13 +12,13 @@ public interface VideoCategoryRepository extends JpaRepository<VideoCategoryEnti
     @Query("SELECT vc FROM VideoCategoryEntity vc " +
             "JOIN FETCH vc.course " +
             "JOIN FETCH vc.videos " +
-            "WHERE vc.course.courseId IN (:courseIds)")
-    List<VideoCategoryEntity> findAllByCourseIdIn(List<String> courseIds);
+            "WHERE vc.course.slug IN (:slugs)")
+    List<VideoCategoryEntity> findAllBySlugIn(List<String> slugs);
 
     @Query("SELECT vc FROM VideoCategoryEntity vc " +
             "JOIN vc.course " +
-            "WHERE vc.course.courseId = :courseId")
-    List<VideoCategoryEntity> findAllByCourseId(String courseId);
+            "WHERE vc.course.slug = :slug")
+    List<VideoCategoryEntity> findAllBySlug(String slug);
 
     void deleteAllByCourse(CourseEntity course);
 }
