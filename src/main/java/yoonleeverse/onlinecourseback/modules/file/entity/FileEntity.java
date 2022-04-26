@@ -24,4 +24,8 @@ public class FileEntity extends BaseTimeEntity {
     private Long id;
 
     private String fileUrl;
+
+    public void updateFileUrl(String fileUrl) {
+        this.fileUrl = fileUrl;
+    }
 }

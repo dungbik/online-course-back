@@ -14,10 +14,10 @@ public class UserType {
     private Boolean emailAgreed;
     private String avatar;
 
-    public UserType(UserEntity user) {
+    public UserType(UserEntity user, String cloudUrl) {
         this.name = user.getName();
         this.email = user.getEmail();
         this.emailAgreed = user.getEmailAgreed();
-        this.avatar = user.getAvatar();
+        this.avatar = String.format("%s/%s", cloudUrl, user.getAvatar().getFileUrl());
     }
 }

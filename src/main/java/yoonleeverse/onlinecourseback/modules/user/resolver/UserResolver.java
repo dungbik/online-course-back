@@ -61,8 +61,8 @@ public class UserResolver {
 
     @DgsMutation
     @PreAuthorize("isAuthenticated()")
-    public ResultType updateAvatar(@InputArgument String avatar) {
-        return userService.updateAvatar(avatar);
+    public ResultType updateAvatar(DgsDataFetchingEnvironment dfe) {
+        return userService.updateAvatar(dfe.getArgument("avatar"));
     }
 
     @DgsMutation
