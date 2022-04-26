@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
+@Getter
 public class AWSConfig {
     @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
@@ -22,7 +24,7 @@ public class AWSConfig {
     private String region;
 
     @Value("${cloud.aws.s3.bucket}")
-    public String s3Bucket;
+    private String s3Bucket;
 
     @Bean
     public AmazonS3Client amazonS3Client() {
