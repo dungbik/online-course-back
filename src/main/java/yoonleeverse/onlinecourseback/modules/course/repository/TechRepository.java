@@ -10,7 +10,6 @@ import java.util.List;
 public interface TechRepository extends JpaRepository<TechEntity, Long> {
 
     @Override
-    @EntityGraph(attributePaths = {"logo"})
     List<TechEntity> findAll();
 
     boolean existsByName(String name);
