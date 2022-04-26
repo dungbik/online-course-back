@@ -1,12 +1,11 @@
 package yoonleeverse.onlinecourseback.modules.course.service.impl;
 
-import graphql.GraphQLException;
-import graphql.GraphqlErrorException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
@@ -33,6 +32,7 @@ public class CourseServiceImpl implements CourseService {
     private final VideoRepository videoRepository;
     private final CommentRepository commentRepository;
     private final PaymentRepository paymentRepository;
+    private final AWSConfig awsConfig;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -121,7 +121,8 @@ public class CourseServiceImpl implements CourseService {
 
         courseTechRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
-                    result.get((String) obj[0]).add(new TechType((TechEntity) obj[1]))
+                    // todo mapper 클래스 만들어서 관리하는게 좋을듯
+                    result.get((String) obj[0]).add(new TechType((TechEntity) obj[1], awsConfig.getFileCloudUrl()))
                 );
 
         return result;

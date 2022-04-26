@@ -49,6 +49,8 @@ cloud:
       static: ${AWS_REGION:default}
     stack:
       auto: false
+    file:
+      url: ${FILE_CLOUD_URL:default}
 
 com:
   amazonaws:

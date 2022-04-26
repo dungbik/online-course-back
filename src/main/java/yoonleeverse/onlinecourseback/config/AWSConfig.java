@@ -26,6 +26,9 @@ public class AWSConfig {
     @Value("${cloud.aws.s3.bucket}")
     private String s3Bucket;
 
+    @Value("${cloud.aws.file.url}")
+    private String fileCloudUrl;
+
     @Bean
     public AmazonS3Client amazonS3Client() {
         log.info(String.format(

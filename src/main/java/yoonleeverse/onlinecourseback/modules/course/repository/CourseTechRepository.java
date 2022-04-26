@@ -13,6 +13,7 @@ public interface CourseTechRepository extends JpaRepository<CourseTechEntity, Lo
     @Query("SELECT ct.course.slug, ct.tech FROM CourseTechEntity ct " +
             "JOIN ct.tech " +
             "JOIN ct.course " +
+            "JOIN FETCH ct.tech.logo " +
             "WHERE ct.course.slug IN (:slugs)")
     List<Object[]> findAllBySlugIn(List<String> slugs);
 

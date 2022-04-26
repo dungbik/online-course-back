@@ -9,9 +9,9 @@ public class TechType {
     private String name;
     private String logo;
 
-    public TechType(TechEntity tech) {
+    public TechType(TechEntity tech, String cloudUrl) {
         this.id = tech.getId();
         this.name = tech.getName();
-        this.logo = tech.getLogo();
+        this.logo = String.format("%s/%s", cloudUrl, tech.getLogo().getFileUrl());
     }
 }

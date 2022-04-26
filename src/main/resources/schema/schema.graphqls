@@ -10,3 +10,4 @@ type ResultType {
 }
 
 scalar Long
+scalar Upload

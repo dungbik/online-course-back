@@ -7,7 +7,7 @@ extend type Query {
 }
 
 extend type Mutation {
-    addTech(input: AddTechInput): ResultType
+    addTech(name: String, logo: Upload): ResultType
     removeTech(id: Long): ResultType
     addCourse(input: AddCourseInput): ResultType
     updateCourse(input: UpdateCourseInput): ResultType
@@ -54,11 +54,6 @@ type CommentType {
     writer: String
     content: String
     parentId: String
-}
-
-input AddTechInput {
-    name: String
-    logo: String
 }
 
 input AddCourseInput {
