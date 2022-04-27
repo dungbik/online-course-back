@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
-import yoonleeverse.onlinecourseback.modules.course.types.input.AddTechInput;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import javax.persistence.*;
 
@@ -23,14 +23,14 @@ public class TechEntity extends BaseTimeEntity {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
-    @Column(nullable = false)
-    private String logo;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "file_id")
+    private FileEntity logo;
 
-    public static TechEntity makeTech(AddTechInput input) {
+    public static TechEntity makeTech(String name, FileEntity logo) {
         return TechEntity.builder()
-                .name(input.getName())
-                .logo(input.getLogo())
+                .name(name)
+                .logo(logo)
                 .build();
     }
 }

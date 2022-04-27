@@ -6,9 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.user.types.UpdateUserInput;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -44,8 +44,9 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    @Lob @Basic(fetch = FetchType.EAGER)
-    private String avatar;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "avatar_id")
+    private FileEntity avatar;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(joinColumns = @JoinColumn(name = "id"))
@@ -80,7 +81,7 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
     }
 
 
-    public void updateAvatar(String avatar) {
+    public void updateAvatar(FileEntity avatar) {
         this.avatar = avatar;
     }
 

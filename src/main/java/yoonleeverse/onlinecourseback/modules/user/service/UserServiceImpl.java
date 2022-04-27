@@ -10,7 +10,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
+import yoonleeverse.onlinecourseback.modules.file.repository.FileRepository;
+import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
 import yoonleeverse.onlinecourseback.modules.mail.EmailMessage;
 import yoonleeverse.onlinecourseback.modules.mail.EmailService;
 import yoonleeverse.onlinecourseback.modules.user.types.*;
@@ -34,6 +39,9 @@ public class UserServiceImpl implements UserService {
     private final AuthenticationManager authenticationProvider;
     private final JWTProvider jwtProvider;
     private final EmailService emailService;
+    private final FileRepository fileRepository;
+    private final StorageService storageService;
+    private final AWSConfig awsConfig;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -43,7 +51,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserType getUser() {
-        return new UserType(currentUser());
+        // todo mapper 클래스 만들어서 관리하는게 좋을듯
+        return new UserType(currentUser(), awsConfig.getFileCloudUrl());
     }
 
     @Override
@@ -163,12 +172,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultType updateAvatar(String avatar) {
+    public ResultType updateAvatar(MultipartFile file) {
         try {
             UserEntity exUser = userRepository.findByEmail(currentUser().getEmail())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
 
-            exUser.updateAvatar(avatar);
+            FileEntity exAvatar = exUser.getAvatar();
+            String fileUrl = storageService.put(file, exUser.getName(), "public/avatar");
+
+            if (exAvatar != null) {
+                storageService.delete(exUser.getAvatar().getFileUrl());
+                exAvatar.updateFileUrl(fileUrl);
+            } else {
+                FileEntity avatar = FileEntity.builder()
+                        .fileUrl(fileUrl)
+                        .build();
+                fileRepository.save(avatar);
+
+                exUser.updateAvatar(avatar);
+            }
 
             return ResultType.success();
         } catch (Exception e) {
@@ -185,8 +207,12 @@ public class UserServiceImpl implements UserService {
             if (exUser.getAuthorities().contains(AuthorityEntity.ROLE_ADMIN))
                 throw new RuntimeException("관리자 계정은 삭제할 수 없습니다.");
 
-            userRepository.delete(exUser);
+            FileEntity exAvatar = exUser.getAvatar();
+            if (exAvatar != null) {
+                storageService.delete(exUser.getAvatar().getFileUrl());
+            }
 
+            userRepository.delete(exUser);
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.getMessage());

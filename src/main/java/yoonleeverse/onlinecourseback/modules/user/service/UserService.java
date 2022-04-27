@@ -1,5 +1,6 @@
 package yoonleeverse.onlinecourseback.modules.user.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.user.types.*;
 
@@ -21,7 +22,7 @@ public interface UserService {
 
     ResultType updateEmail(String email);
 
-    ResultType updateAvatar(String avatar);
+    ResultType updateAvatar(MultipartFile file);
 
     ResultType removeUser();
 }

@@ -1,5 +1,6 @@
 package yoonleeverse.onlinecourseback.modules.course.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
@@ -7,6 +8,9 @@ import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
 import java.util.List;
 
 public interface TechRepository extends JpaRepository<TechEntity, Long> {
+
+    @Override
+    List<TechEntity> findAll();
 
     boolean existsByName(String name);
 

@@ -9,7 +9,7 @@ extend type Mutation {
     reIssue: ReIssueResultType
     updateUser(input: UpdateUserInput): ResultType
     updateEmail(email: String): ResultType
-    updateAvatar(avatar: String): ResultType
+    updateAvatar(avatar: Upload!): ResultType
     removeUser: ResultType
 }
 
