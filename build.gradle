@@ -41,8 +41,11 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-//generateJava {
-//    schemaPaths = ["${projectDir}/src/main/resources/schema"]
-//    packageName = 'yoonleeverse.onlinecourseback.generated'
-//    generateClient = true
-//}
+generateJava {
+    schemaPaths = ["${projectDir}/src/main/resources/schema"]
+    packageName = 'yoonleeverse.onlinecourseback.generated'
+    generateClient = true
+    typeMapping = [
+            "Long" : "java.lang.Long",
+    ]
+}
