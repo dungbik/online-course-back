@@ -18,11 +18,11 @@ import yoonleeverse.onlinecourseback.modules.file.repository.FileRepository;
 import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
 import yoonleeverse.onlinecourseback.modules.mail.EmailMessage;
 import yoonleeverse.onlinecourseback.modules.mail.EmailService;
+import yoonleeverse.onlinecourseback.modules.user.entity.AuthorityEntity;
+import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
+import yoonleeverse.onlinecourseback.modules.user.repository.UserRepository;
 import yoonleeverse.onlinecourseback.modules.user.types.*;
 import yoonleeverse.onlinecourseback.security.JWTProvider;
-import yoonleeverse.onlinecourseback.modules.user.entity.AuthorityEntity;
-import yoonleeverse.onlinecourseback.modules.user.repository.UserRepository;
-import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;

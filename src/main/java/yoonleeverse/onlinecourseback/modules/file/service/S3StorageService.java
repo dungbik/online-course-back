@@ -14,7 +14,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static com.amazonaws.services.s3.model.CannedAccessControlList.*;
+import static com.amazonaws.services.s3.model.CannedAccessControlList.PublicRead;
 
 @Service
 @RequiredArgsConstructor

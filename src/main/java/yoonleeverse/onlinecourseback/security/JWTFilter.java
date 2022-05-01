@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

@@ -10,7 +10,6 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "courses")

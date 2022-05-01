@@ -9,11 +9,11 @@ import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.Prerequ
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
+import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 import yoonleeverse.onlinecourseback.modules.course.types.VideoType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
-import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
-import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 

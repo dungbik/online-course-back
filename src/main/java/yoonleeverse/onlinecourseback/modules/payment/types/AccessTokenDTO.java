@@ -1,6 +1,5 @@
 package yoonleeverse.onlinecourseback.modules.payment.types;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
