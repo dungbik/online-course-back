@@ -1,0 +1,59 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:default}
+    password: ${MAIL_PASSWORD:default}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          timeout: 5000
+          starttls:
+            enable: true
+
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8000
+
+logging:
+  level:
+    yoonleeverse:
+      onlinecourseback: debug
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+
+
+config:
+  imp:
+    key: ${IMP_KEY:test}
+    secret: ${IMP_SECRET:test}
+
+cloud:
+  aws:
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY:default}
+      secretKey: ${AWS_SECRET_KEY:default}
+    s3:
+      bucket: ${S3_BUCKET:default}
+    region:
+      static: ${AWS_REGION:default}
+    stack:
+      auto: false
+    file:
+      url: ${FILE_CLOUD_URL:default}
+
+com:
+  amazonaws:
+    sdk:
+      disableEc2Metadata: true
