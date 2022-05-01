@@ -1,7 +1,12 @@
 spring:
-  h2:
-    console:
-      enabled: true
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL:jdbc:mariadb://localhost:3306/online_course}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+  jpa:
+    hibernate:
+      ddl-auto: update
 
   mail:
     host: smtp.gmail.com
