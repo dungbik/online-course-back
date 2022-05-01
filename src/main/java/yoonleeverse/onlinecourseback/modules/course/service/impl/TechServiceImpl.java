@@ -65,6 +65,11 @@ public class TechServiceImpl implements TechService {
             TechEntity exTech = techRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 기술입니다."));
 
+            FileEntity logo = exTech.getLogo();
+            if (logo != null) {
+                storageService.delete(logo.getFileUrl());
+            }
+
             techRepository.delete(exTech);
             courseTechRepository.deleteAllByTech(exTech);
 
