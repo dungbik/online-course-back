@@ -40,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/graphql/**", "/graphiql/**").permitAll()
-                    .requestMatchers(PathRequest.toH2Console()).permitAll()
+//                    .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -48,7 +48,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().requestMatchers(PathRequest.toH2Console());
+//        web.ignoring().requestMatchers(PathRequest.toH2Console());
     }
 
     @Override
