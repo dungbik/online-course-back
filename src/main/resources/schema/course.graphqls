@@ -9,8 +9,8 @@ extend type Query {
 extend type Mutation {
     addTech(name: String, logo: Upload): ResultType
     removeTech(id: Long): ResultType
-    addCourse(input: AddCourseInput): ResultType
-    updateCourse(input: UpdateCourseInput): ResultType
+    addCourse(input: AddCourseInput, logo: Upload): ResultType
+    updateCourse(input: UpdateCourseInput, logo: Upload): ResultType
     removeCourse(slug: String): ResultType
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
@@ -59,7 +59,6 @@ type CommentType {
 input AddCourseInput {
     title: String
     subTitle: String
-    logo: String
     mainColor: String
     level: String
     price: Int
@@ -83,7 +82,6 @@ input UpdateCourseInput {
     slug: String
     title: String
     subTitle: String
-    logo: String
     mainColor: String
     level: String
     price: Int

@@ -5,6 +5,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
@@ -12,6 +13,9 @@ import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.*;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
+import yoonleeverse.onlinecourseback.modules.file.repository.FileRepository;
+import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 import yoonleeverse.onlinecourseback.modules.payment.repository.PaymentRepository;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
@@ -33,6 +37,8 @@ public class CourseServiceImpl implements CourseService {
     private final CommentRepository commentRepository;
     private final PaymentRepository paymentRepository;
     private final AWSConfig awsConfig;
+    private final StorageService storageService;
+    private final FileRepository fileRepository;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -42,7 +48,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseType> getAllCourse() {
         return courseRepository.findAll().stream()
-                .map(CourseType::new)
+                .map((course) -> new CourseType(course, awsConfig.getFileCloudUrl()))
                 .collect(Collectors.toList());
     }
 
@@ -51,16 +57,22 @@ public class CourseServiceImpl implements CourseService {
         CourseEntity exCourse = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-        return new CourseType(exCourse);
+        return new CourseType(exCourse, awsConfig.getFileCloudUrl());
     }
 
     @Override
-    public ResultType addCourse(AddCourseInput input) {
+    public ResultType addCourse(AddCourseInput input, MultipartFile file) {
         try {
             if (courseRepository.existsByTitle(input.getTitle()))
                 throw new RuntimeException("이미 존재하는 이름입니다.");
 
-            CourseEntity course = CourseEntity.makeCourse(input);
+            String fileUrl = storageService.put(file, input.getTitle(), "public/course");
+            FileEntity logo = FileEntity.builder()
+                    .fileUrl(fileUrl)
+                    .build();
+            fileRepository.save(logo);
+
+            CourseEntity course = CourseEntity.makeCourse(input, logo);
             courseRepository.save(course);
 
             saveMainTechs(input.getMainTechs(), course);
@@ -136,7 +148,7 @@ public class CourseServiceImpl implements CourseService {
 
         prerequisiteRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
-                    result.get((String) obj[0]).add(new CourseType((CourseEntity) obj[1]))
+                    result.get((String) obj[0]).add(new CourseType((CourseEntity) obj[1], awsConfig.getFileCloudUrl()))
                 );
 
         return result;
@@ -157,12 +169,26 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public ResultType updateCourse(UpdateCourseInput input) {
+    public ResultType updateCourse(UpdateCourseInput input, MultipartFile file) {
         try {
             CourseEntity exCourse = courseRepository.findBySlug(input.getSlug())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-            exCourse.updateCourse(input);
+            FileEntity newLogo = null;
+            if (file != null) {
+                FileEntity oldLogo = exCourse.getLogo();
+                if (oldLogo != null) {
+                    storageService.delete(oldLogo.getFileUrl());
+                }
+
+                String fileUrl = storageService.put(file, input.getTitle(), "public/course");
+                newLogo = FileEntity.builder()
+                        .fileUrl(fileUrl)
+                        .build();
+                fileRepository.save(newLogo);
+            }
+
+            exCourse.updateCourse(input, newLogo);
 
             // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
             removeCourse(exCourse);
@@ -191,6 +217,12 @@ public class CourseServiceImpl implements CourseService {
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
             removeCourse(exCourse);
+
+            FileEntity logo = exCourse.getLogo();
+            if (logo != null) {
+                storageService.delete(logo.getFileUrl());
+            }
+
             courseRepository.delete(exCourse);
 
             return ResultType.success();

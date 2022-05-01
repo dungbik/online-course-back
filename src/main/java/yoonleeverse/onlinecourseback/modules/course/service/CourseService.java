@@ -1,5 +1,6 @@
 package yoonleeverse.onlinecourseback.modules.course.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
@@ -15,7 +16,7 @@ public interface CourseService {
 
     CourseType getCourse(String slug);
 
-    ResultType addCourse(AddCourseInput input);
+    ResultType addCourse(AddCourseInput input, MultipartFile file);
 
     Map<String, List<TechType>> techsForCourses(List<String> slugs);
 
@@ -23,7 +24,7 @@ public interface CourseService {
 
     Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs);
 
-    ResultType updateCourse(UpdateCourseInput input);
+    ResultType updateCourse(UpdateCourseInput input, MultipartFile file);
 
     ResultType removeCourse(String courseId);
 

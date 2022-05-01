@@ -8,7 +8,6 @@ import java.util.List;
 public class AddCourseInput {
     private String title;
     private String subTitle;
-    private String logo;
     private String mainColor;
     private String level;
     private Integer price;

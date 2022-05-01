@@ -1,6 +1,7 @@
 package yoonleeverse.onlinecourseback.modules.course.resolver;
 
 import com.netflix.graphql.dgs.*;
+import graphql.schema.DataFetchingEnvironment;
 import lombok.RequiredArgsConstructor;
 import org.dataloader.DataLoader;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,14 +65,14 @@ public class CourseDataFetcher {
 
     @DgsMutation
     @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
-    public ResultType addCourse(@InputArgument AddCourseInput input) {
-        return courseService.addCourse(input);
+    public ResultType addCourse(@InputArgument AddCourseInput input, DataFetchingEnvironment dfe) {
+        return courseService.addCourse(input, dfe.getArgument("logo"));
     }
 
     @DgsMutation
     @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
-    public ResultType updateCourse(@InputArgument UpdateCourseInput input) {
-        return courseService.updateCourse(input);
+    public ResultType updateCourse(@InputArgument UpdateCourseInput input, DataFetchingEnvironment dfe) {
+        return courseService.updateCourse(input, dfe.getArgument("logo"));
     }
 
     @DgsMutation

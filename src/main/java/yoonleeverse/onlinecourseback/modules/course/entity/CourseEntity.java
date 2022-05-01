@@ -8,6 +8,7 @@ import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import javax.persistence.*;
 
@@ -28,7 +29,9 @@ public class CourseEntity extends BaseTimeEntity {
 
     private String subTitle;
 
-    private String logo;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "file_id")
+    private FileEntity logo;
 
     private String mainColor;
 
@@ -37,23 +40,25 @@ public class CourseEntity extends BaseTimeEntity {
 
     private Integer price;
 
-    public static CourseEntity makeCourse(AddCourseInput input) {
+    public static CourseEntity makeCourse(AddCourseInput input, FileEntity logo) {
         return CourseEntity.builder()
                 .title(input.getTitle())
                 .slug(StringUtil.toSlug(input.getTitle()))
                 .subTitle(input.getSubTitle())
-                .logo(input.getLogo())
+                .logo(logo)
                 .mainColor(input.getMainColor())
                 .level(LevelEnum.valueOf(input.getLevel()))
                 .price(input.getPrice())
                 .build();
     }
 
-    public void updateCourse(UpdateCourseInput input) {
+    public void updateCourse(UpdateCourseInput input, FileEntity logo) {
         this.title = input.getTitle();
         this.slug = StringUtil.toSlug(input.getTitle());
         this.subTitle = input.getSubTitle();
-        this.logo = input.getLogo();
+        if (logo != null) {
+            this.logo = logo;
+        }
         this.mainColor = input.getMainColor();
         this.level = LevelEnum.valueOf(input.getLevel());
         this.price = input.getPrice();

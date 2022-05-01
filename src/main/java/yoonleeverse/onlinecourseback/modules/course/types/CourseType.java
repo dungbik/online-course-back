@@ -14,11 +14,11 @@ public class CourseType {
     private String level;
     private Integer price;
 
-    public CourseType(CourseEntity course) {
+    public CourseType(CourseEntity course, String cloudUrl) {
         this.slug = course.getSlug();
         this.title = course.getTitle();
         this.subTitle = course.getSubTitle();
-        this.logo = course.getLogo();
+        this.logo = String.format("%s/%s", cloudUrl, course.getLogo().getFileUrl());
         this.mainColor = course.getMainColor();
         this.level = course.getLevel().getName();
         this.price = course.getPrice();
