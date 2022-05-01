@@ -18,6 +18,8 @@ public class UserType {
         this.name = user.getName();
         this.email = user.getEmail();
         this.emailAgreed = user.getEmailAgreed();
-        this.avatar = String.format("%s/%s", cloudUrl, user.getAvatar().getFileUrl());
+        if (user.getAvatar() != null) {
+            this.avatar = String.format("%s/%s", cloudUrl, user.getAvatar().getFileUrl());
+        }
     }
 }

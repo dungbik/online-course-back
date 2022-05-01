@@ -12,6 +12,8 @@ public class TechType {
     public TechType(TechEntity tech, String cloudUrl) {
         this.id = tech.getId();
         this.name = tech.getName();
-        this.logo = String.format("%s/%s", cloudUrl, tech.getLogo().getFileUrl());
+        if (tech.getLogo() != null) {
+            this.logo = String.format("%s/%s", cloudUrl, tech.getLogo().getFileUrl());
+        }
     }
 }
