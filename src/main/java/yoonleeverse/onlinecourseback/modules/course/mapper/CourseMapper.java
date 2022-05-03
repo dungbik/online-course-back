@@ -2,11 +2,14 @@ package yoonleeverse.onlinecourseback.modules.course.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
+import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,6 +17,8 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class CourseMapper {
+
+    private final AWSConfig awsConfig;
 
     public CourseEntity toEntity(AddCourseInput input, List<CourseEntity> prerequisites, List<TechEntity> mainTechs) {
         CourseEntity course = CourseEntity.builder()
@@ -68,6 +73,24 @@ public class CourseMapper {
     public CourseTechEntity toEntity(TechEntity tech) {
         return CourseTechEntity.builder()
                 .tech(tech)
+                .build();
+    }
+
+    public TechEntity toEntity(String name, FileEntity logo) {
+        return TechEntity.builder()
+                .name(name)
+                .logo(logo)
+                .build();
+    }
+
+    public TechType toDTO(TechEntity tech) {
+        String logo = null;
+        if (tech.getLogo() != null) {
+            logo = String.format("%s/%s", awsConfig.getFileCloudUrl(), tech.getLogo().getFileUrl());
+        }
+
+        return TechType.builder()
+                .id(tech.getId()).name(tech.getName()).logo(logo)
                 .build();
     }
 }

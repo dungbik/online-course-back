@@ -93,10 +93,7 @@ public class CourseServiceImpl implements CourseService {
         slugs.forEach((id) -> result.put(id, new ArrayList<>()));
 
         courseTechRepository.findAllBySlugIn(slugs).stream()
-                .forEach(obj ->
-                    // todo mapper 클래스 만들어서 관리하는게 좋을듯
-                    result.get((String) obj[0]).add(new TechType((TechEntity) obj[1], awsConfig.getFileCloudUrl()))
-                );
+                .forEach(obj -> result.get((String) obj[0]).add(courseMapper.toDTO((TechEntity) obj[1])));
 
         return result;
     }

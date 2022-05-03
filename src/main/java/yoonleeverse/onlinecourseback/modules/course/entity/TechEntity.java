@@ -8,6 +8,7 @@ import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "techs")
@@ -27,10 +28,6 @@ public class TechEntity extends BaseTimeEntity {
     @JoinColumn(name = "file_id")
     private FileEntity logo;
 
-    public static TechEntity makeTech(String name, FileEntity logo) {
-        return TechEntity.builder()
-                .name(name)
-                .logo(logo)
-                .build();
-    }
+    @OneToMany(mappedBy = "tech", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CourseTechEntity> courses;
 }
