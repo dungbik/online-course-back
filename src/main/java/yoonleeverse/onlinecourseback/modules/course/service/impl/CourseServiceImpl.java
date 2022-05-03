@@ -75,26 +75,16 @@ public class CourseServiceImpl implements CourseService {
                 input.setLogo(fileMapper.toEntity(fileUrl));
             }
 
-            CourseEntity course = courseMapper.toEntity(input);
+            CourseEntity course = courseMapper.toEntity(
+                    input, courseRepository.getAllBySlugIn(input.getPrerequisite()));
             courseRepository.save(course);
 
             saveMainTechs(input.getMainTechs(), course);
-            savePrerequisites(input.getPrerequisite(), course);
 
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.toString());
         }
-    }
-
-    private void savePrerequisites(List<String> slugs, CourseEntity course) {
-        courseRepository.getAllBySlugIn(slugs).stream()
-                .forEach((requiredCourse) ->
-                    prerequisiteRepository.save(PrerequisiteEntity.builder()
-                            .course(course)
-                            .requiredCourse(requiredCourse)
-                            .build())
-                );
     }
 
     private void saveMainTechs(List<Long> mainTechs, CourseEntity course) {
@@ -166,15 +156,17 @@ public class CourseServiceImpl implements CourseService {
                 exCourse.getLogo().updateFileUrl(fileUrl);
             }
 
-            exCourse.updateCourse(input, input.getVideoCategories().stream()
-                    .map(courseMapper::toEntity)
-                    .collect(Collectors.toList()));
+            exCourse.updateCourse(
+                    input,
+                    input.getVideoCategories().stream()
+                            .map(courseMapper::toEntity).collect(Collectors.toList()),
+                    courseRepository.getAllBySlugIn(input.getPrerequisite()).stream()
+                            .map(courseMapper::toEntity).collect(Collectors.toList()));
 
             // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
             removeCourse(exCourse);
 
             saveMainTechs(input.getMainTechs(), exCourse);
-            savePrerequisites(input.getPrerequisite(), exCourse);
 
             return ResultType.success();
         } catch (Exception e) {

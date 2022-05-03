@@ -3,21 +3,19 @@ package yoonleeverse.onlinecourseback.modules.course.mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.LevelEnum;
-import yoonleeverse.onlinecourseback.modules.course.entity.VideoCategoryEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class CourseMapper {
 
-    public CourseEntity toEntity(AddCourseInput input) {
+    public CourseEntity toEntity(AddCourseInput input, List<CourseEntity> prerequisites) {
         CourseEntity course = CourseEntity.builder()
                 .title(input.getTitle())
                 .slug(StringUtil.toSlug(input.getTitle()))
@@ -28,6 +26,7 @@ public class CourseMapper {
                 .price(input.getPrice())
                 .videoCategories(input.getVideoCategories().stream()
                         .map((category) -> toEntity(category)).collect(Collectors.toList()))
+                .prerequisites(prerequisites.stream().map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
                 .build();
 
         course.getVideoCategories().forEach((videoCategory) -> {
@@ -35,6 +34,7 @@ public class CourseMapper {
             videoCategory.getVideos()
                     .forEach((video) -> video.setParent(videoCategory, course));
         });
+        course.getPrerequisites().forEach((prerequisite -> prerequisite.setParent(course)));
         return course;
     }
 
@@ -52,6 +52,12 @@ public class CourseMapper {
                 .link(input.getLink())
                 .freePreview(input.getFreePreview())
                 .text(input.getText())
+                .build();
+    }
+
+    public PrerequisiteEntity toEntity(CourseEntity requiredCourse) {
+        return PrerequisiteEntity.builder()
+                .requiredCourse(requiredCourse)
                 .build();
     }
 
