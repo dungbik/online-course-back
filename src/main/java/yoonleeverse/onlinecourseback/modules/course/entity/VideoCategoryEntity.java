@@ -20,14 +20,14 @@ import java.util.UUID;
 public class VideoCategoryEntity extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private CourseEntity course;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VideoEntity> videos = new ArrayList<>();
 
     @Column(unique = true, nullable = false)
@@ -39,5 +39,9 @@ public class VideoCategoryEntity extends BaseTimeEntity {
     @PrePersist
     void prePersist() {
         this.categoryId = UUID.randomUUID().toString();
+    }
+
+    public void setParent(CourseEntity course) {
+        this.course = course;
     }
 }

@@ -1,16 +1,13 @@
 package yoonleeverse.onlinecourseback.modules.course.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
-import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "courses")
@@ -20,7 +17,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class CourseEntity extends BaseTimeEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
@@ -33,6 +30,9 @@ public class CourseEntity extends BaseTimeEntity {
     @JoinColumn(name = "file_id")
     private FileEntity logo;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<VideoCategoryEntity> videoCategories;
+
     private String mainColor;
 
     @Enumerated(EnumType.STRING)
@@ -40,27 +40,27 @@ public class CourseEntity extends BaseTimeEntity {
 
     private Integer price;
 
-    public static CourseEntity makeCourse(AddCourseInput input, FileEntity logo) {
-        return CourseEntity.builder()
-                .title(input.getTitle())
-                .slug(StringUtil.toSlug(input.getTitle()))
-                .subTitle(input.getSubTitle())
-                .logo(logo)
-                .mainColor(input.getMainColor())
-                .level(LevelEnum.valueOf(input.getLevel()))
-                .price(input.getPrice())
-                .build();
-    }
-
-    public void updateCourse(UpdateCourseInput input, FileEntity logo) {
+    public void updateCourse(UpdateCourseInput input, List<VideoCategoryEntity> videoCategories) {
         this.title = input.getTitle();
         this.slug = StringUtil.toSlug(input.getTitle());
         this.subTitle = input.getSubTitle();
-        if (logo != null) {
-            this.logo = logo;
-        }
         this.mainColor = input.getMainColor();
         this.level = LevelEnum.valueOf(input.getLevel());
         this.price = input.getPrice();
+        this.videoCategories.forEach(category -> {
+                    category.setParent(null);
+                    category.getVideos()
+                            .forEach(videoEntity -> videoEntity.setParent(category, null));
+                }
+        );
+
+        if (videoCategories != null) {
+            videoCategories.forEach(category -> {
+                category.setParent(this);
+                category.getVideos()
+                        .forEach(videoEntity -> videoEntity.setParent(category, this));
+            });
+            this.videoCategories.addAll(videoCategories);
+        }
     }
 }

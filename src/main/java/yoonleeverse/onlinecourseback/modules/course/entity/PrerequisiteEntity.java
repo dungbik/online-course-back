@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class PrerequisiteEntity extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -18,7 +18,7 @@ import java.util.UUID;
 public class VideoEntity extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,9 +41,18 @@ public class VideoEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String link;
 
+    @Column(nullable = false)
+    private Boolean freePreview;
+
+    private String text;
+
     @PrePersist
     void prePersist() {
         this.videoId = UUID.randomUUID().toString();
     }
 
+    public void setParent(VideoCategoryEntity category, CourseEntity course) {
+        this.category = category;
+        this.course = course;
+    }
 }

@@ -9,11 +9,13 @@ import org.springframework.web.multipart.MultipartFile;
 import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
+import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
 import yoonleeverse.onlinecourseback.modules.course.types.input.*;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
+import yoonleeverse.onlinecourseback.modules.file.mapper.FileMapper;
 import yoonleeverse.onlinecourseback.modules.file.repository.FileRepository;
 import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
@@ -39,6 +41,8 @@ public class CourseServiceImpl implements CourseService {
     private final AWSConfig awsConfig;
     private final StorageService storageService;
     private final FileRepository fileRepository;
+    private final CourseMapper courseMapper;
+    private final FileMapper fileMapper;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -66,43 +70,21 @@ public class CourseServiceImpl implements CourseService {
             if (courseRepository.existsByTitle(input.getTitle()))
                 throw new RuntimeException("이미 존재하는 이름입니다.");
 
-            String fileUrl = storageService.put(file, input.getTitle(), "public/course");
-            FileEntity logo = FileEntity.builder()
-                    .fileUrl(fileUrl)
-                    .build();
-            fileRepository.save(logo);
+            if (file != null) {
+                String fileUrl = storageService.put(file, input.getTitle(), "public/course");
+                input.setLogo(fileMapper.toEntity(fileUrl));
+            }
 
-            CourseEntity course = CourseEntity.makeCourse(input, logo);
+            CourseEntity course = courseMapper.toEntity(input);
             courseRepository.save(course);
 
             saveMainTechs(input.getMainTechs(), course);
             savePrerequisites(input.getPrerequisite(), course);
-            saveVideoCategories(input.getVideoCategories(), course);
 
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.toString());
         }
-    }
-
-    private void saveVideoCategories(List<CategoryInput> videoCategories, CourseEntity course) {
-        videoCategories.stream().forEach((categoryInput) -> {
-            VideoCategoryEntity category = VideoCategoryEntity.builder()
-                    .course(course)
-                    .title(categoryInput.getTitle())
-                    .build();
-            videoCategoryRepository.save(category);
-            categoryInput.getVideos().stream().forEach((videoInput -> {
-                VideoEntity video = VideoEntity.builder()
-                        .category(category)
-                        .course(course)
-                        .title(videoInput.getTitle())
-                        .time(videoInput.getTime())
-                        .link(videoInput.getLink())
-                        .build();
-                videoRepository.save(video);
-            }));
-        });
     }
 
     private void savePrerequisites(List<String> slugs, CourseEntity course) {
@@ -174,7 +156,6 @@ public class CourseServiceImpl implements CourseService {
             CourseEntity exCourse = courseRepository.findBySlug(input.getSlug())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-            FileEntity newLogo = null;
             if (file != null) {
                 FileEntity oldLogo = exCourse.getLogo();
                 if (oldLogo != null) {
@@ -182,20 +163,18 @@ public class CourseServiceImpl implements CourseService {
                 }
 
                 String fileUrl = storageService.put(file, input.getTitle(), "public/course");
-                newLogo = FileEntity.builder()
-                        .fileUrl(fileUrl)
-                        .build();
-                fileRepository.save(newLogo);
+                exCourse.getLogo().updateFileUrl(fileUrl);
             }
 
-            exCourse.updateCourse(input, newLogo);
+            exCourse.updateCourse(input, input.getVideoCategories().stream()
+                    .map(courseMapper::toEntity)
+                    .collect(Collectors.toList()));
 
             // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
             removeCourse(exCourse);
 
             saveMainTechs(input.getMainTechs(), exCourse);
             savePrerequisites(input.getPrerequisite(), exCourse);
-            saveVideoCategories(input.getVideoCategories(), exCourse);
 
             return ResultType.success();
         } catch (Exception e) {
@@ -206,8 +185,6 @@ public class CourseServiceImpl implements CourseService {
     public void removeCourse(CourseEntity course) {
         courseTechRepository.deleteAllByCourse(course);
         prerequisiteRepository.deleteAllByCourse(course);
-        videoRepository.deleteAllByCategoryIn(videoCategoryRepository.findAllBySlug(course.getSlug()));
-        videoCategoryRepository.deleteAllByCourse(course);
     }
 
     @Override

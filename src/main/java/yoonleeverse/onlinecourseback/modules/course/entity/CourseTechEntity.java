@@ -15,7 +15,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class CourseTechEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

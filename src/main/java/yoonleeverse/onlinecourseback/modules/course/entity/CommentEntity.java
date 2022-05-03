@@ -20,7 +20,7 @@ import java.util.UUID;
 public class CommentEntity extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String commentId;
