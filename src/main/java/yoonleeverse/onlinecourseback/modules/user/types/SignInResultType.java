@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 @Data
 @NoArgsConstructor

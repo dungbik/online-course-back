@@ -2,8 +2,6 @@ package yoonleeverse.onlinecourseback.modules.course.types;
 
 import lombok.Builder;
 import lombok.Data;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 @Data
 @Builder
