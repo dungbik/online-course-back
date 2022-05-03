@@ -18,11 +18,9 @@ public class SignInResultType {
 
     private UserType user;
 
-    public static SignInResultType success(String accessToken, UserEntity user) {
-        return new SignInResultType(
-                true, null,
-                accessToken,
-                new UserType(user.getName(), user.getEmail(), user.getEmailAgreed(), user.getAvatar().getFileUrl()));
+    public static SignInResultType success(String accessToken, UserType user) {
+
+        return new SignInResultType(true, null, accessToken, user);
     }
 
     public static SignInResultType fail(String error) {

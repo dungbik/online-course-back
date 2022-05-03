@@ -95,7 +95,8 @@ public class UserServiceImpl implements UserService {
 
             response.addCookie(cookie);
 
-            return SignInResultType.success(jwtProvider.createAuthToken(user), user);
+            return SignInResultType.success(
+                    jwtProvider.createAuthToken(user), new UserType(user, awsConfig.getFileCloudUrl()));
         } catch (LockedException e) {
             return SignInResultType.fail("이메일 인증이 완료되지 않았습니다.");
         } catch (Exception e) {
