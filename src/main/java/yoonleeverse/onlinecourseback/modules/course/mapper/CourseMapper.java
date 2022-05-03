@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseMapper {
 
-    public CourseEntity toEntity(AddCourseInput input, List<CourseEntity> prerequisites) {
+    public CourseEntity toEntity(AddCourseInput input, List<CourseEntity> prerequisites, List<TechEntity> mainTechs) {
         CourseEntity course = CourseEntity.builder()
                 .title(input.getTitle())
                 .slug(StringUtil.toSlug(input.getTitle()))
@@ -26,7 +26,10 @@ public class CourseMapper {
                 .price(input.getPrice())
                 .videoCategories(input.getVideoCategories().stream()
                         .map((category) -> toEntity(category)).collect(Collectors.toList()))
-                .prerequisites(prerequisites.stream().map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
+                .prerequisites(prerequisites.stream()
+                        .map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
+                .mainTechs(mainTechs.stream()
+                        .map((tech) -> toEntity(tech)).collect(Collectors.toList()))
                 .build();
 
         course.getVideoCategories().forEach((videoCategory) -> {
@@ -35,6 +38,7 @@ public class CourseMapper {
                     .forEach((video) -> video.setParent(videoCategory, course));
         });
         course.getPrerequisites().forEach((prerequisite -> prerequisite.setParent(course)));
+        course.getMainTechs().forEach((tech) -> tech.setParent(course));
         return course;
     }
 
@@ -61,4 +65,9 @@ public class CourseMapper {
                 .build();
     }
 
+    public CourseTechEntity toEntity(TechEntity tech) {
+        return CourseTechEntity.builder()
+                .tech(tech)
+                .build();
+    }
 }

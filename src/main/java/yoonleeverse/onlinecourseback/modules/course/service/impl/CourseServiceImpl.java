@@ -76,25 +76,14 @@ public class CourseServiceImpl implements CourseService {
             }
 
             CourseEntity course = courseMapper.toEntity(
-                    input, courseRepository.getAllBySlugIn(input.getPrerequisite()));
+                    input, courseRepository.getAllBySlugIn(input.getPrerequisite()),
+                    techRepository.findAllByIds(input.getMainTechs()));
             courseRepository.save(course);
-
-            saveMainTechs(input.getMainTechs(), course);
 
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.toString());
         }
-    }
-
-    private void saveMainTechs(List<Long> mainTechs, CourseEntity course) {
-        techRepository.findAllByIds(mainTechs).stream()
-                .forEach((tech) ->
-                        courseTechRepository.save(CourseTechEntity.builder()
-                                .course(course)
-                                .tech(tech)
-                                .build())
-                );
     }
 
     @Override
@@ -161,12 +150,10 @@ public class CourseServiceImpl implements CourseService {
                     input.getVideoCategories().stream()
                             .map(courseMapper::toEntity).collect(Collectors.toList()),
                     courseRepository.getAllBySlugIn(input.getPrerequisite()).stream()
-                            .map(courseMapper::toEntity).collect(Collectors.toList()));
-
-            // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
-            removeCourse(exCourse);
-
-            saveMainTechs(input.getMainTechs(), exCourse);
+                            .map(courseMapper::toEntity).collect(Collectors.toList()),
+                    techRepository.findAllByIds(input.getMainTechs()).stream()
+                            .map(courseMapper::toEntity).collect(Collectors.toList())
+                    );
 
             return ResultType.success();
         } catch (Exception e) {
@@ -174,18 +161,11 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public void removeCourse(CourseEntity course) {
-        courseTechRepository.deleteAllByCourse(course);
-        prerequisiteRepository.deleteAllByCourse(course);
-    }
-
     @Override
     public ResultType removeCourse(String slug) {
         try {
             CourseEntity exCourse = courseRepository.findBySlug(slug)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
-
-            removeCourse(exCourse);
 
             FileEntity logo = exCourse.getLogo();
             if (logo != null) {

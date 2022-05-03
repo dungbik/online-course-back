@@ -26,4 +26,7 @@ public class CourseTechEntity {
     @JoinColumn(name = "tech_id")
     private TechEntity tech;
 
+    public void setParent(CourseEntity course) {
+        this.course = course;
+    }
 }
