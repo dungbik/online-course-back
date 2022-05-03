@@ -1,6 +1,7 @@
 package yoonleeverse.onlinecourseback.modules.course.types.input;
 
 import lombok.Data;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public class AddCourseInput {
     private List<String> prerequisite;
     private List<CategoryInput> videoCategories;
 
+    private FileEntity logo;
 }

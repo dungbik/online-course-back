@@ -19,7 +19,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class PaymentEntity extends BaseTimeEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

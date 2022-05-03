@@ -48,6 +48,7 @@ type VideoType {
     time: Int
     link: String
     freePreview: Boolean
+    text: String
 }
 
 type CommentType {
@@ -78,6 +79,7 @@ input VideoInput {
     time: Int
     link: String
     freePreview: Boolean
+    text: String
 }
 
 input UpdateCourseInput {
