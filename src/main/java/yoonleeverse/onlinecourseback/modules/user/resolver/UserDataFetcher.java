@@ -12,7 +12,7 @@ import yoonleeverse.onlinecourseback.modules.user.types.*;
 
 @DgsComponent
 @RequiredArgsConstructor
-public class UserResolver {
+public class UserDataFetcher {
 
     private final UserService userService;
 
