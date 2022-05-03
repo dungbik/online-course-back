@@ -66,11 +66,14 @@ public class CourseServiceImpl implements CourseService {
             if (courseRepository.existsByTitle(input.getTitle()))
                 throw new RuntimeException("이미 존재하는 이름입니다.");
 
-            String fileUrl = storageService.put(file, input.getTitle(), "public/course");
-            FileEntity logo = FileEntity.builder()
-                    .fileUrl(fileUrl)
-                    .build();
-            fileRepository.save(logo);
+            FileEntity logo = null;
+            if (file != null) {
+                String fileUrl = storageService.put(file, input.getTitle(), "public/course");
+                logo = FileEntity.builder()
+                        .fileUrl(fileUrl)
+                        .build();
+                fileRepository.save(logo);
+            }
 
             CourseEntity course = CourseEntity.makeCourse(input, logo);
             courseRepository.save(course);
@@ -99,6 +102,7 @@ public class CourseServiceImpl implements CourseService {
                         .title(videoInput.getTitle())
                         .time(videoInput.getTime())
                         .link(videoInput.getLink())
+                        .freePreview(videoInput.getFreePreview())
                         .build();
                 videoRepository.save(video);
             }));

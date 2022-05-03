@@ -2,6 +2,7 @@ package yoonleeverse.onlinecourseback.modules.course.types;
 
 import lombok.Data;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 @Data
 public class CourseType {
@@ -18,7 +19,11 @@ public class CourseType {
         this.slug = course.getSlug();
         this.title = course.getTitle();
         this.subTitle = course.getSubTitle();
-        this.logo = String.format("%s/%s", cloudUrl, course.getLogo().getFileUrl());
+        
+        FileEntity logo = course.getLogo();
+        if (logo != null) {
+            this.logo = String.format("%s/%s", cloudUrl, logo.getFileUrl());
+        }
         this.mainColor = course.getMainColor();
         this.level = course.getLevel().getName();
         this.price = course.getPrice();
