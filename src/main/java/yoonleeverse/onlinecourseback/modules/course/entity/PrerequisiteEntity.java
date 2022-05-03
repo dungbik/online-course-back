@@ -28,4 +28,8 @@ public class PrerequisiteEntity extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "required_id")
     private CourseEntity requiredCourse;
+
+    public void setParent(CourseEntity course) {
+        this.course = course;
+    }
 }

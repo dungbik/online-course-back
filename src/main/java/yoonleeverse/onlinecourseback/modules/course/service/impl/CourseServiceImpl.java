@@ -6,17 +6,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
-import yoonleeverse.onlinecourseback.modules.course.entity.*;
+import yoonleeverse.onlinecourseback.modules.course.entity.CommentEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.*;
-import yoonleeverse.onlinecourseback.modules.course.types.input.*;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCommentInput;
+import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.file.mapper.FileMapper;
-import yoonleeverse.onlinecourseback.modules.file.repository.FileRepository;
 import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 import yoonleeverse.onlinecourseback.modules.payment.repository.PaymentRepository;
@@ -38,9 +42,7 @@ public class CourseServiceImpl implements CourseService {
     private final VideoRepository videoRepository;
     private final CommentRepository commentRepository;
     private final PaymentRepository paymentRepository;
-    private final AWSConfig awsConfig;
     private final StorageService storageService;
-    private final FileRepository fileRepository;
     private final CourseMapper courseMapper;
     private final FileMapper fileMapper;
 
@@ -52,7 +54,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseType> getAllCourse() {
         return courseRepository.findAll().stream()
-                .map((course) -> new CourseType(course, awsConfig.getFileCloudUrl()))
+                .map(courseMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +63,7 @@ public class CourseServiceImpl implements CourseService {
         CourseEntity exCourse = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-        return new CourseType(exCourse, awsConfig.getFileCloudUrl());
+        return courseMapper.toDTO(exCourse);
     }
 
     @Override
@@ -75,36 +77,15 @@ public class CourseServiceImpl implements CourseService {
                 input.setLogo(fileMapper.toEntity(fileUrl));
             }
 
-            CourseEntity course = courseMapper.toEntity(input);
+            CourseEntity course = courseMapper.toEntity(
+                    input, courseRepository.getAllBySlugIn(input.getPrerequisite()),
+                    techRepository.findAllByIds(input.getMainTechs()));
             courseRepository.save(course);
-
-            saveMainTechs(input.getMainTechs(), course);
-            savePrerequisites(input.getPrerequisite(), course);
 
             return ResultType.success();
         } catch (Exception e) {
             return ResultType.fail(e.toString());
         }
-    }
-
-    private void savePrerequisites(List<String> slugs, CourseEntity course) {
-        courseRepository.getAllBySlugIn(slugs).stream()
-                .forEach((requiredCourse) ->
-                    prerequisiteRepository.save(PrerequisiteEntity.builder()
-                            .course(course)
-                            .requiredCourse(requiredCourse)
-                            .build())
-                );
-    }
-
-    private void saveMainTechs(List<Long> mainTechs, CourseEntity course) {
-        techRepository.findAllByIds(mainTechs).stream()
-                .forEach((tech) ->
-                        courseTechRepository.save(CourseTechEntity.builder()
-                                .course(course)
-                                .tech(tech)
-                                .build())
-                );
     }
 
     @Override
@@ -114,10 +95,7 @@ public class CourseServiceImpl implements CourseService {
         slugs.forEach((id) -> result.put(id, new ArrayList<>()));
 
         courseTechRepository.findAllBySlugIn(slugs).stream()
-                .forEach(obj ->
-                    // todo mapper 클래스 만들어서 관리하는게 좋을듯
-                    result.get((String) obj[0]).add(new TechType((TechEntity) obj[1], awsConfig.getFileCloudUrl()))
-                );
+                .forEach(obj -> result.get((String) obj[0]).add(courseMapper.toDTO((TechEntity) obj[1])));
 
         return result;
     }
@@ -130,7 +108,7 @@ public class CourseServiceImpl implements CourseService {
 
         prerequisiteRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
-                    result.get((String) obj[0]).add(new CourseType((CourseEntity) obj[1], awsConfig.getFileCloudUrl()))
+                    result.get((String) obj[0]).add(courseMapper.toDTO((CourseEntity) obj[1]))
                 );
 
         return result;
@@ -166,15 +144,15 @@ public class CourseServiceImpl implements CourseService {
                 exCourse.getLogo().updateFileUrl(fileUrl);
             }
 
-            exCourse.updateCourse(input, input.getVideoCategories().stream()
-                    .map(courseMapper::toEntity)
-                    .collect(Collectors.toList()));
-
-            // todo 변경된 사항만 db가 수정되도록 (현재는 다 지우고 새로 넣음)
-            removeCourse(exCourse);
-
-            saveMainTechs(input.getMainTechs(), exCourse);
-            savePrerequisites(input.getPrerequisite(), exCourse);
+            exCourse.updateCourse(
+                    input,
+                    input.getVideoCategories().stream()
+                            .map(courseMapper::toEntity).collect(Collectors.toList()),
+                    courseRepository.getAllBySlugIn(input.getPrerequisite()).stream()
+                            .map(courseMapper::toEntity).collect(Collectors.toList()),
+                    techRepository.findAllByIds(input.getMainTechs()).stream()
+                            .map(courseMapper::toEntity).collect(Collectors.toList())
+                    );
 
             return ResultType.success();
         } catch (Exception e) {
@@ -182,18 +160,11 @@ public class CourseServiceImpl implements CourseService {
         }
     }
 
-    public void removeCourse(CourseEntity course) {
-        courseTechRepository.deleteAllByCourse(course);
-        prerequisiteRepository.deleteAllByCourse(course);
-    }
-
     @Override
     public ResultType removeCourse(String slug) {
         try {
             CourseEntity exCourse = courseRepository.findBySlug(slug)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
-
-            removeCourse(exCourse);
 
             FileEntity logo = exCourse.getLogo();
             if (logo != null) {

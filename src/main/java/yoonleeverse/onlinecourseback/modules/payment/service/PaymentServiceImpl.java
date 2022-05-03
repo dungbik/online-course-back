@@ -11,9 +11,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
+import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
 import yoonleeverse.onlinecourseback.modules.course.repository.CourseRepository;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentStatus;
@@ -42,7 +42,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final AccessTokenRedisRepository accessTokenRepository;
     private final CourseRepository courseRepository;
     private final PaymentRepository paymentRepository;
-    private final AWSConfig awsConfig;
+    private final CourseMapper courseMapper;
 
     private UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -175,6 +175,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public List<PaymentType> getPayments() {
         return paymentRepository.findAllByUser(currentUser()).stream()
-                .map((payment) -> new PaymentType(payment, awsConfig.getFileCloudUrl())).collect(Collectors.toList());
+                .map((payment) -> new PaymentType(payment, courseMapper.toDTO(payment.getCourse())))
+                .collect(Collectors.toList());
     }
 }

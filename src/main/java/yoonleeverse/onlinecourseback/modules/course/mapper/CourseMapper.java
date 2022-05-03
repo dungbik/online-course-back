@@ -2,22 +2,26 @@ package yoonleeverse.onlinecourseback.modules.course.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.LevelEnum;
-import yoonleeverse.onlinecourseback.modules.course.entity.VideoCategoryEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.*;
+import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
+import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
+import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class CourseMapper {
 
-    public CourseEntity toEntity(AddCourseInput input) {
+    private final AWSConfig awsConfig;
+
+    public CourseEntity toEntity(AddCourseInput input, List<CourseEntity> prerequisites, List<TechEntity> mainTechs) {
         CourseEntity course = CourseEntity.builder()
                 .title(input.getTitle())
                 .slug(StringUtil.toSlug(input.getTitle()))
@@ -28,6 +32,10 @@ public class CourseMapper {
                 .price(input.getPrice())
                 .videoCategories(input.getVideoCategories().stream()
                         .map((category) -> toEntity(category)).collect(Collectors.toList()))
+                .prerequisites(prerequisites.stream()
+                        .map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
+                .mainTechs(mainTechs.stream()
+                        .map((tech) -> toEntity(tech)).collect(Collectors.toList()))
                 .build();
 
         course.getVideoCategories().forEach((videoCategory) -> {
@@ -35,6 +43,8 @@ public class CourseMapper {
             videoCategory.getVideos()
                     .forEach((video) -> video.setParent(videoCategory, course));
         });
+        course.getPrerequisites().forEach((prerequisite -> prerequisite.setParent(course)));
+        course.getMainTechs().forEach((tech) -> tech.setParent(course));
         return course;
     }
 
@@ -55,4 +65,50 @@ public class CourseMapper {
                 .build();
     }
 
+    public PrerequisiteEntity toEntity(CourseEntity requiredCourse) {
+        return PrerequisiteEntity.builder()
+                .requiredCourse(requiredCourse)
+                .build();
+    }
+
+    public CourseTechEntity toEntity(TechEntity tech) {
+        return CourseTechEntity.builder()
+                .tech(tech)
+                .build();
+    }
+
+    public TechEntity toEntity(String name, FileEntity logo) {
+        return TechEntity.builder()
+                .name(name)
+                .logo(logo)
+                .build();
+    }
+
+    public TechType toDTO(TechEntity tech) {
+        String logo = null;
+        if (tech.getLogo() != null) {
+            logo = String.format("%s/%s", awsConfig.getFileCloudUrl(), tech.getLogo().getFileUrl());
+        }
+
+        return TechType.builder()
+                .id(tech.getId()).name(tech.getName()).logo(logo)
+                .build();
+    }
+
+    public CourseType toDTO(CourseEntity course) {
+        String logo = null;
+        if (course.getLogo() != null) {
+            logo = String.format("%s/%s", awsConfig.getFileCloudUrl(), course.getLogo().getFileUrl());
+        }
+
+        return CourseType.builder()
+                .slug(course.getSlug())
+                .title(course.getTitle())
+                .subTitle(course.getSubTitle())
+                .logo(logo)
+                .mainColor(course.getMainColor())
+                .level(course.getLevel().getName())
+                .price(course.getPrice())
+                .build();
+    }
 }

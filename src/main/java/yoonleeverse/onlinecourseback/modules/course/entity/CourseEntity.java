@@ -1,6 +1,9 @@
 package yoonleeverse.onlinecourseback.modules.course.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
@@ -33,6 +36,15 @@ public class CourseEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VideoCategoryEntity> videoCategories;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<PrerequisiteEntity> prerequisites;
+
+    @OneToMany(mappedBy = "requiredCourse", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PrerequisiteEntity> followUps;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseTechEntity> mainTechs;
+
     private String mainColor;
 
     @Enumerated(EnumType.STRING)
@@ -40,7 +52,10 @@ public class CourseEntity extends BaseTimeEntity {
 
     private Integer price;
 
-    public void updateCourse(UpdateCourseInput input, List<VideoCategoryEntity> videoCategories) {
+    public void updateCourse(UpdateCourseInput input,
+                             List<VideoCategoryEntity> videoCategories,
+                             List<PrerequisiteEntity> prerequisites,
+                             List<CourseTechEntity> mainTechs) {
         this.title = input.getTitle();
         this.slug = StringUtil.toSlug(input.getTitle());
         this.subTitle = input.getSubTitle();
@@ -53,6 +68,8 @@ public class CourseEntity extends BaseTimeEntity {
                             .forEach(videoEntity -> videoEntity.setParent(category, null));
                 }
         );
+        this.prerequisites.forEach(prerequisite -> prerequisite.setParent(null));
+        this.mainTechs.forEach(tech -> tech.setParent(null));
 
         if (videoCategories != null) {
             videoCategories.forEach(category -> {
@@ -61,6 +78,14 @@ public class CourseEntity extends BaseTimeEntity {
                         .forEach(videoEntity -> videoEntity.setParent(category, this));
             });
             this.videoCategories.addAll(videoCategories);
+        }
+        if (prerequisites != null) {
+            prerequisites.forEach(prerequisite -> prerequisite.setParent(this));
+            this.prerequisites.addAll(prerequisites);
+        }
+        if (mainTechs != null) {
+            mainTechs.forEach(tech -> tech.setParent(this));
+            this.mainTechs.addAll(mainTechs);
         }
     }
 }
