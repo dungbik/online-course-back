@@ -17,6 +17,7 @@ public class VideoType {
     private Integer time;
     private String link;
     private Boolean freePreview;
+    private String text;
 
     public VideoType(VideoEntity video) {
         this.videoId = video.getVideoId();
@@ -31,6 +32,7 @@ public class VideoType {
                 .time(video.getTime())
                 .link(video.getLink())
                 .freePreview(video.getFreePreview())
+                .text(video.getText())
                 .build();
     }
 }

@@ -8,4 +8,5 @@ public class VideoInput {
     private Integer time;
     private String link;
     private Boolean freePreview;
+    private String text;
 }
