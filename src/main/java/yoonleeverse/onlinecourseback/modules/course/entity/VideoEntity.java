@@ -41,6 +41,9 @@ public class VideoEntity extends BaseTimeEntity {
     @Column(nullable = false)
     private String link;
 
+    @Column(nullable = false)
+    private Boolean freePreview;
+
     @PrePersist
     void prePersist() {
         this.videoId = UUID.randomUUID().toString();

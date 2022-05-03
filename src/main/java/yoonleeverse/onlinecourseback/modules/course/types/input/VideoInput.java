@@ -7,4 +7,5 @@ public class VideoInput {
     private String title;
     private Integer time;
     private String link;
+    private Boolean freePreview;
 }
