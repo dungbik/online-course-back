@@ -52,7 +52,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<CourseType> getAllCourse() {
         return courseRepository.findAll().stream()
-                .map((course) -> new CourseType(course, awsConfig.getFileCloudUrl()))
+                .map(courseMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +61,7 @@ public class CourseServiceImpl implements CourseService {
         CourseEntity exCourse = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-        return new CourseType(exCourse, awsConfig.getFileCloudUrl());
+        return courseMapper.toDTO(exCourse);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class CourseServiceImpl implements CourseService {
 
         prerequisiteRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
-                    result.get((String) obj[0]).add(new CourseType((CourseEntity) obj[1], awsConfig.getFileCloudUrl()))
+                    result.get((String) obj[0]).add(courseMapper.toDTO((CourseEntity) obj[1]))
                 );
 
         return result;

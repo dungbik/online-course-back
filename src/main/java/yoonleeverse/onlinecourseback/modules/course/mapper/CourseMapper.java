@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
+import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
@@ -91,6 +92,23 @@ public class CourseMapper {
 
         return TechType.builder()
                 .id(tech.getId()).name(tech.getName()).logo(logo)
+                .build();
+    }
+
+    public CourseType toDTO(CourseEntity course) {
+        String logo = null;
+        if (course.getLogo() != null) {
+            logo = String.format("%s/%s", awsConfig.getFileCloudUrl(), course.getLogo().getFileUrl());
+        }
+
+        return CourseType.builder()
+                .slug(course.getSlug())
+                .title(course.getTitle())
+                .subTitle(course.getSubTitle())
+                .logo(logo)
+                .mainColor(course.getMainColor())
+                .level(course.getLevel().getName())
+                .price(course.getPrice())
                 .build();
     }
 }

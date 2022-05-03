@@ -11,11 +11,9 @@ public class PaymentType {
     private String status;
     private CourseType course;
 
-    public PaymentType(PaymentEntity payment, String cloudUrl) {
+    public PaymentType(PaymentEntity payment, CourseType course) {
         this.amount = payment.getAmount();
         this.status = payment.getStatus().name();
-
-        if (payment.getCourse() != null)
-            this.course = new CourseType(payment.getCourse(), cloudUrl);
+        this.course = course;
     }
 }
