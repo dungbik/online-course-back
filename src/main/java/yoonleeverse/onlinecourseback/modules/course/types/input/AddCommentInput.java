@@ -7,7 +7,7 @@ import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 @Data
 public class AddCommentInput {
 
-    private String videoId;
+    private Long videoId;
     private String parentId;
     private String content;
 

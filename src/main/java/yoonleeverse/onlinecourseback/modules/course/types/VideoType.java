@@ -12,27 +12,28 @@ import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
 @AllArgsConstructor
 public class VideoType {
 
-    private String videoId;
+    private Long videoId;
     private String title;
     private Integer time;
     private String link;
     private Boolean freePreview;
     private String text;
+    private Boolean isCompleted;
 
-    public VideoType(VideoEntity video) {
-        this.videoId = video.getVideoId();
-        this.title = video.getTitle();
-        this.freePreview = video.getFreePreview();
-    }
-
-    public static VideoType of(VideoEntity video) {
-        return VideoType.builder()
-                .videoId(video.getVideoId())
-                .title(video.getTitle())
-                .time(video.getTime())
-                .link(video.getLink())
-                .freePreview(video.getFreePreview())
-                .text(video.getText())
-                .build();
-    }
+//    public VideoType(VideoEntity video) {
+//        this.videoId = video.getId();
+//        this.title = video.getTitle();
+//        this.freePreview = video.getFreePreview();
+//    }
+//
+//    public static VideoType of(VideoEntity video) {
+//        return VideoType.builder()
+//                .videoId(video.getId())
+//                .title(video.getTitle())
+//                .time(video.getTime())
+//                .link(video.getLink())
+//                .freePreview(video.getFreePreview())
+//                .text(video.getText())
+//                .build();
+//    }
 }

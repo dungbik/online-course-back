@@ -2,8 +2,8 @@ extend type Query {
     getAllTech: [TechType]
     getAllCourse: [CourseType]
     getCourse(slug: String): CourseType
-    getAllComment(videoId: String): [CommentType]
-    getVideo(videoId: String!): VideoType
+    getAllComment(videoId: Long): [CommentType]
+    getVideo(videoId: Long!): VideoType
 }
 
 extend type Mutation {
@@ -15,6 +15,7 @@ extend type Mutation {
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
     removeComment(commentId: String): ResultType
+    completeVideo(videoId: Long!): ResultType
 }
 
 type TechType {
@@ -31,6 +32,8 @@ type CourseType {
     mainColor: String
     level: String
     price: Int
+    progress: Int
+    progressVideos: Int
     mainTechs: [TechType]
     prerequisite: [CourseType]
     videoCategories: [VideoCategoryType]
@@ -43,12 +46,13 @@ type VideoCategoryType {
 }
 
 type VideoType {
-    videoId: String
+    videoId: Long
     title: String
     time: Int
     link: String
     freePreview: Boolean
     text: String
+    isCompleted: Boolean
 }
 
 type CommentType {
@@ -95,7 +99,7 @@ input UpdateCourseInput {
 }
 
 input AddCommentInput {
-    videoId: String
+    videoId: Long
     parentId: String
     content: String
 }

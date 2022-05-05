@@ -22,8 +22,6 @@ public interface CourseService {
 
     Map<String, List<CourseType>> prerequisitesForCourses(List<String> slugs);
 
-    Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs);
-
     ResultType updateCourse(UpdateCourseInput input, MultipartFile file);
 
     ResultType removeCourse(String courseId);
@@ -34,7 +32,9 @@ public interface CourseService {
 
     ResultType removeComment(String commentId);
 
-    List<CommentType> getAllComment(String videoId);
+    List<CommentType> getAllComment(Long videoId);
 
-    VideoType getVideo(String videoId);
+    VideoType getVideo(Long videoId);
+
+    ResultType completeVideo(Long videoId);
 }

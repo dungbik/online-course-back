@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
+import java.util.List;
 
 @Entity
 @Table(name = "videos")
@@ -29,9 +29,6 @@ public class VideoEntity extends BaseTimeEntity {
     @JoinColumn(name = "course_id")
     private CourseEntity course;
 
-    @Column(unique = true, nullable = false)
-    private String videoId;
-
     @Column(nullable = false)
     private String title;
 
@@ -46,10 +43,8 @@ public class VideoEntity extends BaseTimeEntity {
 
     private String text;
 
-    @PrePersist
-    void prePersist() {
-        this.videoId = UUID.randomUUID().toString();
-    }
+    @OneToMany(mappedBy = "video", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<VideoHistoryEntity> histories;
 
     public void setParent(VideoCategoryEntity category, CourseEntity course) {
         this.category = category;

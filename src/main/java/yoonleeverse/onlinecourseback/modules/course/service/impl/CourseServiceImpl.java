@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
-import yoonleeverse.onlinecourseback.modules.course.entity.CommentEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
@@ -45,25 +42,61 @@ public class CourseServiceImpl implements CourseService {
     private final StorageService storageService;
     private final CourseMapper courseMapper;
     private final FileMapper fileMapper;
+    private final VideoHistoryRepository videoHistoryRepository;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
-        return (UserEntity) context.getAuthentication().getPrincipal();
+        try {
+            return (UserEntity) context.getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
     public List<CourseType> getAllCourse() {
-        return courseRepository.findAll().stream()
+        List<CourseType> courseDTOList =  courseRepository.findAll().stream()
                 .map(courseMapper::toDTO)
                 .collect(Collectors.toList());
+
+        UserEntity user = currentUser();
+        if (user != null) {
+            List<Long> completedVideoIds = videoHistoryRepository.findVideoIds(user);
+            for (CourseType course : courseDTOList) {
+                int progress = 0;
+                for (VideoCategoryType category : course.getVideoCategories()) {
+                    for (VideoType video : category.getVideos()) {
+                        if (completedVideoIds.contains(video.getVideoId())) {
+                            video.setIsCompleted(true);
+                            progress++;
+                        }
+                    }
+                }
+                course.setProgress(progress);
+            }
+        }
+
+        return courseDTOList;
     }
 
     @Override
     public CourseType getCourse(String slug) {
-        CourseEntity exCourse = courseRepository.findBySlug(slug)
+        CourseEntity exCourse = courseRepository.findWithVideosBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-        return courseMapper.toDTO(exCourse);
+        CourseType courseDTO = courseMapper.toDTO(exCourse);
+        UserEntity user = currentUser();
+        if (user != null) {
+            List<Long> completedVideoIds = videoHistoryRepository.findVideoIdsByCourse(user, exCourse);
+            courseDTO.getVideoCategories().forEach((category) ->
+                    category.getVideos().forEach((video) -> {
+                        if (completedVideoIds.contains(video.getVideoId())) {
+                            video.setIsCompleted(true);
+                        }
+                    }));
+        }
+
+        return courseDTO;
     }
 
     @Override
@@ -109,20 +142,6 @@ public class CourseServiceImpl implements CourseService {
         prerequisiteRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
                     result.get((String) obj[0]).add(courseMapper.toDTO((CourseEntity) obj[1]))
-                );
-
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs) {
-        Map<String, List<VideoCategoryType>> result = new HashMap<>();
-        slugs.forEach((slug) -> result.put(slug, new ArrayList<>()));
-
-        videoCategoryRepository.findAllBySlugIn(slugs).stream()
-                .forEach(videoCategory ->
-                        result.get(videoCategory.getCourse().getSlug()).add(new VideoCategoryType(videoCategory))
                 );
 
         return result;
@@ -182,7 +201,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public ResultType addComment(AddCommentInput input) {
         try {
-            VideoEntity exVideo = videoRepository.findByVideoId(input.getVideoId())
+            VideoEntity exVideo = videoRepository.findById(input.getVideoId())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 동영상입니다."));
 
             input.setWriter(currentUser());
@@ -232,8 +251,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CommentType> getAllComment(String videoId) {
-        VideoEntity exVideo = videoRepository.findByVideoId(videoId)
+    public List<CommentType> getAllComment(Long videoId) {
+        VideoEntity exVideo = videoRepository.findById(videoId)
                 .orElse(null);
 
         if (exVideo == null)
@@ -245,8 +264,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public VideoType getVideo(String videoId) {
-        VideoEntity exVideo = videoRepository.findByVideoId(videoId)
+    public VideoType getVideo(Long videoId) {
+        VideoEntity exVideo = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
 
         Integer price = exVideo.getCourse().getPrice(); // todo null이 저장되지 않게 처리
@@ -256,7 +275,33 @@ public class CourseServiceImpl implements CourseService {
                 throw new RuntimeException("구매하지 않은 강의입니다.");
         }
 
-        return VideoType.of(exVideo);
+        return courseMapper.toDTO(exVideo);
+    }
+
+    @Override
+    public ResultType completeVideo(Long videoId) {
+        try {
+            VideoEntity exVideo = videoRepository.findById(videoId)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
+
+            // todo 강의 등록이 되었는지 확인
+
+            UserEntity user = currentUser();
+            VideoHistoryEntity exVideoHistory
+                    = videoHistoryRepository.findByUserAndVideo(user, exVideo).orElse(null);
+
+            if (exVideoHistory == null) {
+                VideoHistoryEntity videoHistory = VideoHistoryEntity.builder()
+                        .user(user).video(exVideo).build();
+                videoHistoryRepository.save(videoHistory);
+            } else {
+                videoHistoryRepository.delete(exVideoHistory);
+            }
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
     }
 
 }

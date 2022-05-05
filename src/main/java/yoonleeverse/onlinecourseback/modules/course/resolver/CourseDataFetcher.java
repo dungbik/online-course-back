@@ -7,7 +7,6 @@ import org.dataloader.DataLoader;
 import org.springframework.security.access.prepost.PreAuthorize;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.PrerequisiteDataLoader;
-import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
@@ -35,14 +34,6 @@ public class CourseDataFetcher {
         return PrerequisitesDataLoader.load(course.getSlug());
     }
 
-    @DgsData(parentType = "CourseType")
-    public CompletableFuture<List<VideoCategoryType>> videoCategories(DgsDataFetchingEnvironment dfe) {
-        DataLoader<String, List<VideoCategoryType>> videoCategoriesDataLoader = dfe.getDataLoader(VideoCategoryDataLoader.class);
-        CourseType course = dfe.getSource();
-
-        return videoCategoriesDataLoader.load(course.getSlug());
-    }
-
     @DgsQuery
     public List<CourseType> getAllCourse() {
         return courseService.getAllCourse();
@@ -54,12 +45,12 @@ public class CourseDataFetcher {
     }
 
     @DgsQuery
-    public List<CommentType> getAllComment(@InputArgument String videoId) {
+    public List<CommentType> getAllComment(@InputArgument Long videoId) {
         return courseService.getAllComment(videoId);
     }
 
     @DgsQuery
-    public VideoType getVideo(@InputArgument String videoId) {
+    public VideoType getVideo(@InputArgument Long videoId) {
         return courseService.getVideo(videoId);
     }
 
@@ -97,5 +88,11 @@ public class CourseDataFetcher {
     @PreAuthorize("isAuthenticated()")
     public ResultType removeComment(@InputArgument String commentId) {
         return courseService.removeComment(commentId);
+    }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType completeVideo(@InputArgument Long videoId) {
+        return courseService.completeVideo(videoId);
     }
 }

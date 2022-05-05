@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.VideoHistoryEntity;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.user.types.UpdateUserInput;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -52,6 +54,9 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
     @CollectionTable(joinColumns = @JoinColumn(name = "id"))
     @Enumerated(EnumType.STRING)
     private Set<AuthorityEntity> authorities = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<VideoHistoryEntity> histories;
 
     @PrePersist
     void prePersist() {

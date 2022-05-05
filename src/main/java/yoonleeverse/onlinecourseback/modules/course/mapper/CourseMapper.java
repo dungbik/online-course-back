@@ -7,11 +7,14 @@ import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,19 +33,15 @@ public class CourseMapper {
                 .mainColor(input.getMainColor())
                 .level(LevelEnum.valueOf(input.getLevel()))
                 .price(input.getPrice())
-                .videoCategories(input.getVideoCategories().stream()
-                        .map((category) -> toEntity(category)).collect(Collectors.toList()))
+                .videoCategories(new ArrayList<>())
                 .prerequisites(prerequisites.stream()
                         .map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
                 .mainTechs(mainTechs.stream()
                         .map((tech) -> toEntity(tech)).collect(Collectors.toList()))
                 .build();
 
-        course.getVideoCategories().forEach((videoCategory) -> {
-            videoCategory.setParent(course);
-            videoCategory.getVideos()
-                    .forEach((video) -> video.setParent(videoCategory, course));
-        });
+        course.updateVideos(input.getVideoCategories().stream()
+                .map((category) -> toEntity(category)).collect(Collectors.toList()));
         course.getPrerequisites().forEach((prerequisite -> prerequisite.setParent(course)));
         course.getMainTechs().forEach((tech) -> tech.setParent(course));
         return course;
@@ -51,7 +50,7 @@ public class CourseMapper {
     public VideoCategoryEntity toEntity(CategoryInput input) {
         return VideoCategoryEntity.builder()
                 .title(input.getTitle())
-                .videos(input.getVideos().stream().map((video) -> toEntity(video)).collect(Collectors.toList()))
+                .videos(input.getVideos().stream().map((video) -> toEntity(video)).collect(Collectors.toSet()))
                 .build();
     }
 
@@ -109,6 +108,34 @@ public class CourseMapper {
                 .mainColor(course.getMainColor())
                 .level(course.getLevel().getName())
                 .price(course.getPrice())
+                .videoCategories(course.getVideoCategories().stream()
+                        .map((category) -> toDTO(category))
+                        .collect(Collectors.toList()))
+                .progress(0)
+                .progressVideos(course.getProgressVideos())
                 .build();
     }
+
+    public VideoCategoryType toDTO(VideoCategoryEntity videoCategory) {
+        return VideoCategoryType.builder()
+                .categoryId(videoCategory.getCategoryId())
+                .title(videoCategory.getTitle())
+                .videos(videoCategory.getVideos().stream()
+                        .map((video) -> toDTO(video))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public VideoType toDTO(VideoEntity video) {
+        return VideoType.builder()
+                .videoId(video.getId())
+                .title(video.getTitle())
+                .time(video.getTime())
+                .link(video.getLink())
+                .freePreview(video.getFreePreview())
+                .text(video.getText())
+                .isCompleted(false)
+                .build();
+    }
+
 }
