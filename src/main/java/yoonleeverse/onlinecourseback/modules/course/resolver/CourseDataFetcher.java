@@ -54,12 +54,12 @@ public class CourseDataFetcher {
     }
 
     @DgsQuery
-    public List<CommentType> getAllComment(@InputArgument String videoId) {
+    public List<CommentType> getAllComment(@InputArgument Long videoId) {
         return courseService.getAllComment(videoId);
     }
 
     @DgsQuery
-    public VideoType getVideo(@InputArgument String videoId) {
+    public VideoType getVideo(@InputArgument Long videoId) {
         return courseService.getVideo(videoId);
     }
 

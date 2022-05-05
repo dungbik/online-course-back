@@ -34,7 +34,7 @@ public interface CourseService {
 
     ResultType removeComment(String commentId);
 
-    List<CommentType> getAllComment(String videoId);
+    List<CommentType> getAllComment(Long videoId);
 
-    VideoType getVideo(String videoId);
+    VideoType getVideo(Long videoId);
 }

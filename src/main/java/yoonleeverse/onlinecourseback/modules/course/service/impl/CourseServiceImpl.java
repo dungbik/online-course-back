@@ -182,7 +182,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public ResultType addComment(AddCommentInput input) {
         try {
-            VideoEntity exVideo = videoRepository.findByVideoId(input.getVideoId())
+            VideoEntity exVideo = videoRepository.findById(input.getVideoId())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 동영상입니다."));
 
             input.setWriter(currentUser());
@@ -232,8 +232,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CommentType> getAllComment(String videoId) {
-        VideoEntity exVideo = videoRepository.findByVideoId(videoId)
+    public List<CommentType> getAllComment(Long videoId) {
+        VideoEntity exVideo = videoRepository.findById(videoId)
                 .orElse(null);
 
         if (exVideo == null)
@@ -245,8 +245,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public VideoType getVideo(String videoId) {
-        VideoEntity exVideo = videoRepository.findByVideoId(videoId)
+    public VideoType getVideo(Long videoId) {
+        VideoEntity exVideo = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
 
         Integer price = exVideo.getCourse().getPrice(); // todo null이 저장되지 않게 처리

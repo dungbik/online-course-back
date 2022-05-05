@@ -2,8 +2,8 @@ extend type Query {
     getAllTech: [TechType]
     getAllCourse: [CourseType]
     getCourse(slug: String): CourseType
-    getAllComment(videoId: String): [CommentType]
-    getVideo(videoId: String!): VideoType
+    getAllComment(videoId: Long): [CommentType]
+    getVideo(videoId: Long!): VideoType
 }
 
 extend type Mutation {
@@ -43,7 +43,7 @@ type VideoCategoryType {
 }
 
 type VideoType {
-    videoId: String
+    videoId: Long
     title: String
     time: Int
     link: String
@@ -95,7 +95,7 @@ input UpdateCourseInput {
 }
 
 input AddCommentInput {
-    videoId: String
+    videoId: Long
     parentId: String
     content: String
 }

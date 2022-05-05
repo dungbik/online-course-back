@@ -12,7 +12,7 @@ import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
 @AllArgsConstructor
 public class VideoType {
 
-    private String videoId;
+    private Long videoId;
     private String title;
     private Integer time;
     private String link;
@@ -20,14 +20,14 @@ public class VideoType {
     private String text;
 
     public VideoType(VideoEntity video) {
-        this.videoId = video.getVideoId();
+        this.videoId = video.getId();
         this.title = video.getTitle();
         this.freePreview = video.getFreePreview();
     }
 
     public static VideoType of(VideoEntity video) {
         return VideoType.builder()
-                .videoId(video.getVideoId())
+                .videoId(video.getId())
                 .title(video.getTitle())
                 .time(video.getTime())
                 .link(video.getLink())
