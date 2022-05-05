@@ -17,4 +17,6 @@ public class CourseType {
     private String level;
     private Integer price;
     private List<VideoCategoryType> videoCategories;
+    private Integer progress;
+    private Integer progressVideos;
 }

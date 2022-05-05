@@ -46,7 +46,11 @@ public class CourseServiceImpl implements CourseService {
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
-        return (UserEntity) context.getAuthentication().getPrincipal();
+        try {
+            return (UserEntity) context.getAuthentication().getPrincipal();
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
@@ -57,13 +61,19 @@ public class CourseServiceImpl implements CourseService {
 
         UserEntity user = currentUser();
         if (user != null) {
-            List<Long> completedVideoIds = videoHistoryRepository.findVideoIds(currentUser());
-            courseDTOList.stream().forEach(course -> course.getVideoCategories().forEach((category) ->
-                    category.getVideos().forEach((video) -> {
+            List<Long> completedVideoIds = videoHistoryRepository.findVideoIds(user);
+            for (CourseType course : courseDTOList) {
+                int progress = 0;
+                for (VideoCategoryType category : course.getVideoCategories()) {
+                    for (VideoType video : category.getVideos()) {
                         if (completedVideoIds.contains(video.getVideoId())) {
                             video.setIsCompleted(true);
+                            progress++;
                         }
-                    })));
+                    }
+                }
+                course.setProgress(progress);
+            }
         }
 
         return courseDTOList;
@@ -77,7 +87,7 @@ public class CourseServiceImpl implements CourseService {
         CourseType courseDTO = courseMapper.toDTO(exCourse);
         UserEntity user = currentUser();
         if (user != null) {
-            List<Long> completedVideoIds = videoHistoryRepository.findVideoIdsByCourse(currentUser(), exCourse);
+            List<Long> completedVideoIds = videoHistoryRepository.findVideoIdsByCourse(user, exCourse);
             courseDTO.getVideoCategories().forEach((category) ->
                     category.getVideos().forEach((video) -> {
                         if (completedVideoIds.contains(video.getVideoId())) {

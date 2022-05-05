@@ -14,6 +14,7 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,19 +33,15 @@ public class CourseMapper {
                 .mainColor(input.getMainColor())
                 .level(LevelEnum.valueOf(input.getLevel()))
                 .price(input.getPrice())
-                .videoCategories(input.getVideoCategories().stream()
-                        .map((category) -> toEntity(category)).collect(Collectors.toList()))
+                .videoCategories(new ArrayList<>())
                 .prerequisites(prerequisites.stream()
                         .map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
                 .mainTechs(mainTechs.stream()
                         .map((tech) -> toEntity(tech)).collect(Collectors.toList()))
                 .build();
 
-        course.getVideoCategories().forEach((videoCategory) -> {
-            videoCategory.setParent(course);
-            videoCategory.getVideos()
-                    .forEach((video) -> video.setParent(videoCategory, course));
-        });
+        course.updateVideos(input.getVideoCategories().stream()
+                .map((category) -> toEntity(category)).collect(Collectors.toList()));
         course.getPrerequisites().forEach((prerequisite -> prerequisite.setParent(course)));
         course.getMainTechs().forEach((tech) -> tech.setParent(course));
         return course;
@@ -114,6 +111,8 @@ public class CourseMapper {
                 .videoCategories(course.getVideoCategories().stream()
                         .map((category) -> toDTO(category))
                         .collect(Collectors.toList()))
+                .progress(0)
+                .progressVideos(course.getProgressVideos())
                 .build();
     }
 

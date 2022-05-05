@@ -10,6 +10,7 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInpu
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -52,6 +53,8 @@ public class CourseEntity extends BaseTimeEntity {
 
     private Integer price;
 
+    private Integer progressVideos;
+
     public void updateCourse(UpdateCourseInput input,
                              List<VideoCategoryEntity> videoCategories,
                              List<PrerequisiteEntity> prerequisites,
@@ -62,23 +65,8 @@ public class CourseEntity extends BaseTimeEntity {
         this.mainColor = input.getMainColor();
         this.level = LevelEnum.valueOf(input.getLevel());
         this.price = input.getPrice();
-        this.videoCategories.forEach(category -> {
-                    category.setParent(null);
-                    category.getVideos()
-                            .forEach(videoEntity -> videoEntity.setParent(category, null));
-                }
-        );
         this.prerequisites.forEach(prerequisite -> prerequisite.setParent(null));
         this.mainTechs.forEach(tech -> tech.setParent(null));
-
-        if (videoCategories != null) {
-            videoCategories.forEach(category -> {
-                category.setParent(this);
-                category.getVideos()
-                        .forEach(videoEntity -> videoEntity.setParent(category, this));
-            });
-            this.videoCategories.addAll(videoCategories);
-        }
         if (prerequisites != null) {
             prerequisites.forEach(prerequisite -> prerequisite.setParent(this));
             this.prerequisites.addAll(prerequisites);
@@ -86,6 +74,26 @@ public class CourseEntity extends BaseTimeEntity {
         if (mainTechs != null) {
             mainTechs.forEach(tech -> tech.setParent(this));
             this.mainTechs.addAll(mainTechs);
+        }
+        updateVideos(videoCategories);
+    }
+
+    public void updateVideos(List<VideoCategoryEntity> videoCategories) {
+        this.progressVideos = 0;
+        this.videoCategories.forEach(category -> {
+                    category.setParent(null);
+                    category.getVideos()
+                            .forEach(videoEntity -> videoEntity.setParent(category, null));
+                }
+        );
+        if (videoCategories != null) {
+            videoCategories.forEach(category -> {
+                category.setParent(this);
+                category.getVideos()
+                        .forEach(videoEntity -> videoEntity.setParent(category, this));
+                this.progressVideos += category.getVideos().size();
+            });
+            this.videoCategories.addAll(videoCategories);
         }
     }
 }

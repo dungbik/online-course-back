@@ -32,6 +32,8 @@ type CourseType {
     mainColor: String
     level: String
     price: Int
+    progress: Int
+    progressVideos: Int
     mainTechs: [TechType]
     prerequisite: [CourseType]
     videoCategories: [VideoCategoryType]
