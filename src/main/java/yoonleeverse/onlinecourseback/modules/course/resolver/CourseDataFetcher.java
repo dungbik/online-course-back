@@ -98,4 +98,10 @@ public class CourseDataFetcher {
     public ResultType removeComment(@InputArgument String commentId) {
         return courseService.removeComment(commentId);
     }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType completeVideo(@InputArgument Long videoId) {
+        return courseService.completeVideo(videoId);
+    }
 }

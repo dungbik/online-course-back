@@ -15,6 +15,7 @@ extend type Mutation {
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
     removeComment(commentId: String): ResultType
+    completeVideo(videoId: Long!): ResultType
 }
 
 type TechType {

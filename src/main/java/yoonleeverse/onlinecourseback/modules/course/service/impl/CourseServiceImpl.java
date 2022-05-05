@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
-import yoonleeverse.onlinecourseback.modules.course.entity.CommentEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
-import yoonleeverse.onlinecourseback.modules.course.entity.VideoEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
 import yoonleeverse.onlinecourseback.modules.course.repository.*;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
@@ -45,6 +42,7 @@ public class CourseServiceImpl implements CourseService {
     private final StorageService storageService;
     private final CourseMapper courseMapper;
     private final FileMapper fileMapper;
+    private final VideoHistoryRepository videoHistoryRepository;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -257,6 +255,32 @@ public class CourseServiceImpl implements CourseService {
         }
 
         return VideoType.of(exVideo);
+    }
+
+    @Override
+    public ResultType completeVideo(Long videoId) {
+        try {
+            VideoEntity exVideo = videoRepository.findById(videoId)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
+
+            // todo 강의 등록이 되었는지 확인
+
+            UserEntity user = currentUser();
+            VideoHistoryEntity exVideoHistory
+                    = videoHistoryRepository.findByUserAndVideo(user, exVideo).orElse(null);
+
+            if (exVideoHistory == null) {
+                VideoHistoryEntity videoHistory = VideoHistoryEntity.builder()
+                        .user(user).video(exVideo).build();
+                videoHistoryRepository.save(videoHistory);
+            } else {
+                videoHistoryRepository.delete(exVideoHistory);
+            }
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
     }
 
 }

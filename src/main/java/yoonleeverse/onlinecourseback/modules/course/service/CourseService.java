@@ -37,4 +37,6 @@ public interface CourseService {
     List<CommentType> getAllComment(Long videoId);
 
     VideoType getVideo(Long videoId);
+
+    ResultType completeVideo(Long videoId);
 }
