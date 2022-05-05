@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "videos")
@@ -41,6 +42,9 @@ public class VideoEntity extends BaseTimeEntity {
     private Boolean freePreview;
 
     private String text;
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<VideoHistoryEntity> histories;
 
     public void setParent(VideoCategoryEntity category, CourseEntity course) {
         this.category = category;
