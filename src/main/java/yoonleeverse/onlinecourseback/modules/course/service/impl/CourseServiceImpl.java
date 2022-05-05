@@ -51,17 +51,42 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseType> getAllCourse() {
-        return courseRepository.findAll().stream()
+        List<CourseType> courseDTOList =  courseRepository.findAll().stream()
                 .map(courseMapper::toDTO)
                 .collect(Collectors.toList());
+
+        UserEntity user = currentUser();
+        if (user != null) {
+            List<Long> completedVideoIds = videoHistoryRepository.findVideoIds(currentUser());
+            courseDTOList.stream().forEach(course -> course.getVideoCategories().forEach((category) ->
+                    category.getVideos().forEach((video) -> {
+                        if (completedVideoIds.contains(video.getVideoId())) {
+                            video.setIsCompleted(true);
+                        }
+                    })));
+        }
+
+        return courseDTOList;
     }
 
     @Override
     public CourseType getCourse(String slug) {
-        CourseEntity exCourse = courseRepository.findBySlug(slug)
+        CourseEntity exCourse = courseRepository.findWithVideosBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
-        return courseMapper.toDTO(exCourse);
+        CourseType courseDTO = courseMapper.toDTO(exCourse);
+        UserEntity user = currentUser();
+        if (user != null) {
+            List<Long> completedVideoIds = videoHistoryRepository.findVideoIdsByCourse(currentUser(), exCourse);
+            courseDTO.getVideoCategories().forEach((category) ->
+                    category.getVideos().forEach((video) -> {
+                        if (completedVideoIds.contains(video.getVideoId())) {
+                            video.setIsCompleted(true);
+                        }
+                    }));
+        }
+
+        return courseDTO;
     }
 
     @Override
@@ -107,20 +132,6 @@ public class CourseServiceImpl implements CourseService {
         prerequisiteRepository.findAllBySlugIn(slugs).stream()
                 .forEach(obj ->
                     result.get((String) obj[0]).add(courseMapper.toDTO((CourseEntity) obj[1]))
-                );
-
-        return result;
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs) {
-        Map<String, List<VideoCategoryType>> result = new HashMap<>();
-        slugs.forEach((slug) -> result.put(slug, new ArrayList<>()));
-
-        videoCategoryRepository.findAllBySlugIn(slugs).stream()
-                .forEach(videoCategory ->
-                        result.get(videoCategory.getCourse().getSlug()).add(new VideoCategoryType(videoCategory))
                 );
 
         return result;
@@ -254,7 +265,7 @@ public class CourseServiceImpl implements CourseService {
                 throw new RuntimeException("구매하지 않은 강의입니다.");
         }
 
-        return VideoType.of(exVideo);
+        return courseMapper.toDTO(exVideo);
     }
 
     @Override

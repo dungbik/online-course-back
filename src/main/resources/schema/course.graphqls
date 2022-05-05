@@ -50,6 +50,7 @@ type VideoType {
     link: String
     freePreview: Boolean
     text: String
+    isCompleted: Boolean
 }
 
 type CommentType {

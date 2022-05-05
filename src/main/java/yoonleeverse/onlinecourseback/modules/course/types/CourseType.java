@@ -3,6 +3,8 @@ package yoonleeverse.onlinecourseback.modules.course.types;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 public class CourseType {
@@ -14,4 +16,5 @@ public class CourseType {
     private String mainColor;
     private String level;
     private Integer price;
+    private List<VideoCategoryType> videoCategories;
 }

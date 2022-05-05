@@ -7,6 +7,8 @@ import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
 import yoonleeverse.onlinecourseback.modules.course.types.TechType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
+import yoonleeverse.onlinecourseback.modules.course.types.VideoType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
@@ -51,7 +53,7 @@ public class CourseMapper {
     public VideoCategoryEntity toEntity(CategoryInput input) {
         return VideoCategoryEntity.builder()
                 .title(input.getTitle())
-                .videos(input.getVideos().stream().map((video) -> toEntity(video)).collect(Collectors.toList()))
+                .videos(input.getVideos().stream().map((video) -> toEntity(video)).collect(Collectors.toSet()))
                 .build();
     }
 
@@ -109,6 +111,32 @@ public class CourseMapper {
                 .mainColor(course.getMainColor())
                 .level(course.getLevel().getName())
                 .price(course.getPrice())
+                .videoCategories(course.getVideoCategories().stream()
+                        .map((category) -> toDTO(category))
+                        .collect(Collectors.toList()))
                 .build();
     }
+
+    public VideoCategoryType toDTO(VideoCategoryEntity videoCategory) {
+        return VideoCategoryType.builder()
+                .categoryId(videoCategory.getCategoryId())
+                .title(videoCategory.getTitle())
+                .videos(videoCategory.getVideos().stream()
+                        .map((video) -> toDTO(video))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public VideoType toDTO(VideoEntity video) {
+        return VideoType.builder()
+                .videoId(video.getId())
+                .title(video.getTitle())
+                .time(video.getTime())
+                .link(video.getLink())
+                .freePreview(video.getFreePreview())
+                .text(video.getText())
+                .isCompleted(false)
+                .build();
+    }
+
 }

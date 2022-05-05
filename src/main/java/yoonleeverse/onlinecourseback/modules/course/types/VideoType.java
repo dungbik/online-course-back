@@ -18,21 +18,22 @@ public class VideoType {
     private String link;
     private Boolean freePreview;
     private String text;
+    private Boolean isCompleted;
 
-    public VideoType(VideoEntity video) {
-        this.videoId = video.getId();
-        this.title = video.getTitle();
-        this.freePreview = video.getFreePreview();
-    }
-
-    public static VideoType of(VideoEntity video) {
-        return VideoType.builder()
-                .videoId(video.getId())
-                .title(video.getTitle())
-                .time(video.getTime())
-                .link(video.getLink())
-                .freePreview(video.getFreePreview())
-                .text(video.getText())
-                .build();
-    }
+//    public VideoType(VideoEntity video) {
+//        this.videoId = video.getId();
+//        this.title = video.getTitle();
+//        this.freePreview = video.getFreePreview();
+//    }
+//
+//    public static VideoType of(VideoEntity video) {
+//        return VideoType.builder()
+//                .videoId(video.getId())
+//                .title(video.getTitle())
+//                .time(video.getTime())
+//                .link(video.getLink())
+//                .freePreview(video.getFreePreview())
+//                .text(video.getText())
+//                .build();
+//    }
 }

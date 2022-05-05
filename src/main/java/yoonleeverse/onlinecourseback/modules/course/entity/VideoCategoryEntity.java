@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "video_categories")
@@ -28,7 +26,7 @@ public class VideoCategoryEntity extends BaseTimeEntity {
     private CourseEntity course;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VideoEntity> videos = new ArrayList<>();
+    private Set<VideoEntity> videos = new HashSet<>();
 
     @Column(unique = true, nullable = false)
     private String categoryId;

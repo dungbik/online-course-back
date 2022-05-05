@@ -7,7 +7,6 @@ import org.dataloader.DataLoader;
 import org.springframework.security.access.prepost.PreAuthorize;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.PrerequisiteDataLoader;
-import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.VideoCategoryDataLoader;
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
@@ -33,14 +32,6 @@ public class CourseDataFetcher {
         CourseType course = dfe.getSource();
 
         return PrerequisitesDataLoader.load(course.getSlug());
-    }
-
-    @DgsData(parentType = "CourseType")
-    public CompletableFuture<List<VideoCategoryType>> videoCategories(DgsDataFetchingEnvironment dfe) {
-        DataLoader<String, List<VideoCategoryType>> videoCategoriesDataLoader = dfe.getDataLoader(VideoCategoryDataLoader.class);
-        CourseType course = dfe.getSource();
-
-        return videoCategoriesDataLoader.load(course.getSlug());
     }
 
     @DgsQuery

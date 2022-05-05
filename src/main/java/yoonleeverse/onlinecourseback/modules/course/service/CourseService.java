@@ -22,8 +22,6 @@ public interface CourseService {
 
     Map<String, List<CourseType>> prerequisitesForCourses(List<String> slugs);
 
-    Map<String, List<VideoCategoryType>> videoCategoriesForCourses(List<String> slugs);
-
     ResultType updateCourse(UpdateCourseInput input, MultipartFile file);
 
     ResultType removeCourse(String courseId);
