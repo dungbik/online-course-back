@@ -102,7 +102,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             return paymentInfo.getBody().getResponse();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new RuntimeException(String.format("userId: %s, impUid: %s의 결제 내역 가져오기 실패", currentUser().getUserId(), impUid));
         }
     }
@@ -114,6 +114,10 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new RuntimeException(
                             String.format("merchantUid: %ld는 존재하지 않는 거래내역입니다.", merchantUid)));
             payment.cancel();
+            CourseEnrollmentEntity enrollment = payment.getEnrollment();
+            if (enrollment != null)
+                enrollmentRepository.delete(enrollment);
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }

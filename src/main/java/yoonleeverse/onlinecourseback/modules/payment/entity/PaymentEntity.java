@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.CourseEnrollmentEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
 import yoonleeverse.onlinecourseback.modules.payment.types.PaymentInput;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
@@ -38,6 +39,10 @@ public class PaymentEntity extends BaseTimeEntity {
     private PaymentStatus status;
 
     private Integer amount;
+
+    @OneToOne
+    @JoinColumn(name = "enrollment_id")
+    private CourseEnrollmentEntity enrollment;
 
     public void cancel() {
         this.status = PaymentStatus.FAIL;
