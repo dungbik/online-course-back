@@ -125,7 +125,7 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentEntity payment = paymentRepository.findByMerchantUid(merchantUid)
                     .orElseThrow(() -> new RuntimeException(
                             String.format("merchantUid: %ld는 존재하지 않는 거래내역입니다.", merchantUid)));
-            payment.cancel();
+            payment.success();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
