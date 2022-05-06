@@ -113,6 +113,7 @@ public class CourseMapper {
                         .collect(Collectors.toList()))
                 .progress(0)
                 .progressVideos(course.getProgressVideos())
+                .isEnrolled(false)
                 .build();
     }
 

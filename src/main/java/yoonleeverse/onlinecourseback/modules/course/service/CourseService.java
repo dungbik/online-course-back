@@ -37,4 +37,6 @@ public interface CourseService {
     VideoType getVideo(Long videoId);
 
     ResultType completeVideo(Long videoId);
+
+    ResultType enroll(String slug);
 }

@@ -12,8 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.course.entity.CourseEnrollmentEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
+import yoonleeverse.onlinecourseback.modules.course.repository.CourseEnrollmentRepository;
 import yoonleeverse.onlinecourseback.modules.course.repository.CourseRepository;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentStatus;
@@ -43,6 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final CourseRepository courseRepository;
     private final PaymentRepository paymentRepository;
     private final CourseMapper courseMapper;
+    private final CourseEnrollmentRepository enrollmentRepository;
 
     private UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -159,6 +162,10 @@ public class PaymentServiceImpl implements PaymentService {
                         "userId: %s, slug: %s는 가격이 변조되었습니다.",
                         user.getUserId(), input.getSlug())
                 );
+
+            CourseEnrollmentEntity enrollment = CourseEnrollmentEntity.builder()
+                    .user(user).course(course).build();
+            enrollmentRepository.save(enrollment);
 
             successPayment(input.getMerchantUid());
             return ResultType.success();
