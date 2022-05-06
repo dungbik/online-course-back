@@ -35,14 +35,13 @@ public class CourseServiceImpl implements CourseService {
     private final CourseTechRepository courseTechRepository;
     private final TechRepository techRepository;
     private final PrerequisiteRepository prerequisiteRepository;
-    private final VideoCategoryRepository videoCategoryRepository;
     private final VideoRepository videoRepository;
     private final CommentRepository commentRepository;
-    private final PaymentRepository paymentRepository;
     private final StorageService storageService;
     private final CourseMapper courseMapper;
     private final FileMapper fileMapper;
     private final VideoHistoryRepository videoHistoryRepository;
+    private final CourseEnrollmentRepository enrollmentRepository;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -62,6 +61,7 @@ public class CourseServiceImpl implements CourseService {
         UserEntity user = currentUser();
         if (user != null) {
             List<Long> completedVideoIds = videoHistoryRepository.findVideoIds(user);
+            List<String> enrolledSlugs = enrollmentRepository.findCourseIds(user);
             for (CourseType course : courseDTOList) {
                 int progress = 0;
                 for (VideoCategoryType category : course.getVideoCategories()) {
@@ -73,7 +73,11 @@ public class CourseServiceImpl implements CourseService {
                     }
                 }
                 course.setProgress(progress);
+                if (enrolledSlugs.contains(course.getSlug())) {
+                    course.setIsEnrolled(true);
+                }
             }
+
         }
 
         return courseDTOList;
@@ -88,12 +92,17 @@ public class CourseServiceImpl implements CourseService {
         UserEntity user = currentUser();
         if (user != null) {
             List<Long> completedVideoIds = videoHistoryRepository.findVideoIdsByCourse(user, exCourse);
+            List<String> enrolledSlugs = enrollmentRepository.findCourseIdsByCourse(user, exCourse);
+
             courseDTO.getVideoCategories().forEach((category) ->
                     category.getVideos().forEach((video) -> {
                         if (completedVideoIds.contains(video.getVideoId())) {
                             video.setIsCompleted(true);
                         }
                     }));
+            if (enrolledSlugs.contains(courseDTO.getSlug())) {
+                courseDTO.setIsEnrolled(true);
+            }
         }
 
         return courseDTO;
@@ -268,12 +277,12 @@ public class CourseServiceImpl implements CourseService {
         VideoEntity exVideo = videoRepository.findById(videoId)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
 
-        Integer price = exVideo.getCourse().getPrice(); // todo null이 저장되지 않게 처리
-        if (price == null || price > 0) {
-            Optional<PaymentEntity> paymentHistory = paymentRepository.findByUserAndCourse(currentUser(), exVideo.getCourse());
-            if (!paymentHistory.isPresent())
-                throw new RuntimeException("구매하지 않은 강의입니다.");
-        }
+        UserEntity user = currentUser();
+        if (user == null)
+            throw new RuntimeException("유저 정보가 존재하지 않습니다.");
+
+        enrollmentRepository.findByUserAndCourse(user, exVideo.getCourse())
+                .orElseThrow(() -> new RuntimeException("등록되지 않은 강의입니다."));
 
         return courseMapper.toDTO(exVideo);
     }
@@ -284,9 +293,13 @@ public class CourseServiceImpl implements CourseService {
             VideoEntity exVideo = videoRepository.findById(videoId)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 영상입니다."));
 
-            // todo 강의 등록이 되었는지 확인
-
             UserEntity user = currentUser();
+            if (user == null)
+                throw new RuntimeException("유저 정보가 존재하지 않습니다.");
+
+            enrollmentRepository.findByUserAndCourse(user, exVideo.getCourse())
+                    .orElseThrow(() -> new RuntimeException("등록되지 않은 강의입니다."));
+
             VideoHistoryEntity exVideoHistory
                     = videoHistoryRepository.findByUserAndVideo(user, exVideo).orElse(null);
 
@@ -297,6 +310,32 @@ public class CourseServiceImpl implements CourseService {
             } else {
                 videoHistoryRepository.delete(exVideoHistory);
             }
+
+            return ResultType.success();
+        } catch (Exception e) {
+            return ResultType.fail(e.getMessage());
+        }
+    }
+
+    @Override
+    public ResultType enroll(String slug) {
+        try {
+            CourseEntity exCourse = courseRepository.findBySlug(slug)
+                    .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
+
+            UserEntity user = currentUser();
+            if (user == null)
+                throw new RuntimeException("유저 정보가 존재하지 않습니다.");
+
+            if (enrollmentRepository.findByUserAndCourse(user, exCourse).isPresent())
+                throw new RuntimeException("이미 등록된 강의입니다.");
+
+            if (exCourse.getPrice() > 0)
+                throw new RuntimeException("유료 강의는 결제가 필요합니다.");
+
+            CourseEnrollmentEntity enrollment = CourseEnrollmentEntity.builder()
+                    .user(user).course(exCourse).build();
+            enrollmentRepository.save(enrollment);
 
             return ResultType.success();
         } catch (Exception e) {

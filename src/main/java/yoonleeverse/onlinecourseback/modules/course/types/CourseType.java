@@ -19,4 +19,5 @@ public class CourseType {
     private List<VideoCategoryType> videoCategories;
     private Integer progress;
     private Integer progressVideos;
+    private Boolean isEnrolled;
 }

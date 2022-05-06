@@ -12,8 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
+import yoonleeverse.onlinecourseback.modules.course.entity.CourseEnrollmentEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
+import yoonleeverse.onlinecourseback.modules.course.repository.CourseEnrollmentRepository;
 import yoonleeverse.onlinecourseback.modules.course.repository.CourseRepository;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentStatus;
@@ -43,6 +45,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final CourseRepository courseRepository;
     private final PaymentRepository paymentRepository;
     private final CourseMapper courseMapper;
+    private final CourseEnrollmentRepository enrollmentRepository;
 
     private UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -99,7 +102,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             return paymentInfo.getBody().getResponse();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             throw new RuntimeException(String.format("userId: %s, impUid: %s의 결제 내역 가져오기 실패", currentUser().getUserId(), impUid));
         }
     }
@@ -111,6 +114,10 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new RuntimeException(
                             String.format("merchantUid: %ld는 존재하지 않는 거래내역입니다.", merchantUid)));
             payment.cancel();
+            CourseEnrollmentEntity enrollment = payment.getEnrollment();
+            if (enrollment != null)
+                enrollmentRepository.delete(enrollment);
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -122,7 +129,7 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentEntity payment = paymentRepository.findByMerchantUid(merchantUid)
                     .orElseThrow(() -> new RuntimeException(
                             String.format("merchantUid: %ld는 존재하지 않는 거래내역입니다.", merchantUid)));
-            payment.cancel();
+            payment.success();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -159,6 +166,10 @@ public class PaymentServiceImpl implements PaymentService {
                         "userId: %s, slug: %s는 가격이 변조되었습니다.",
                         user.getUserId(), input.getSlug())
                 );
+
+            CourseEnrollmentEntity enrollment = CourseEnrollmentEntity.builder()
+                    .user(user).course(course).build();
+            enrollmentRepository.save(enrollment);
 
             successPayment(input.getMerchantUid());
             return ResultType.success();

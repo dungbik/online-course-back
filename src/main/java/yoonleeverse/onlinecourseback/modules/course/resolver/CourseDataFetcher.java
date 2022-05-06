@@ -95,4 +95,10 @@ public class CourseDataFetcher {
     public ResultType completeVideo(@InputArgument Long videoId) {
         return courseService.completeVideo(videoId);
     }
+
+    @DgsMutation
+    @PreAuthorize("isAuthenticated()")
+    public ResultType enroll(@InputArgument String slug) {
+        return courseService.enroll(slug);
+    }
 }
