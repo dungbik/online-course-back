@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import yoonleeverse.onlinecourseback.generated.client.*;
 import yoonleeverse.onlinecourseback.generated.types.ResultType;
 import yoonleeverse.onlinecourseback.generated.types.TechType;
+import yoonleeverse.onlinecourseback.modules.course.repository.TechRepository;
+import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 
 import java.io.FileInputStream;
 import java.util.List;
@@ -30,6 +32,9 @@ class TechDataFetcherE2ETest {
     @Autowired
     DgsQueryExecutor dgsQueryExecutor;
 
+    @Autowired
+    TechRepository techRepository;
+
     @Test
     @Order(1)
     void addTech() throws Exception {
@@ -40,6 +45,7 @@ class TechDataFetcherE2ETest {
 
         ResultType result = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
                 query, "data.addTech", Maps.newHashMap("logo", logo), ResultType.class);
+
         assertThat(result.getSuccess()).isTrue();
         assertThat(result.getError()).isNullOrEmpty();
     }
@@ -66,7 +72,7 @@ class TechDataFetcherE2ETest {
     @Order(3)
     void removeTech() {
         GraphQLQueryRequest graphQLQueryRequest = new GraphQLQueryRequest(
-                new RemoveTechGraphQLQuery.Builder().id(3L).build(),
+                new RemoveTechGraphQLQuery.Builder().id(techRepository.findAll().get(0).getId()).build(),
                 new RemoveTechProjectionRoot().success().error()
         );
 
