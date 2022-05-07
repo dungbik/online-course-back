@@ -55,6 +55,9 @@ public class CourseEntity extends BaseTimeEntity {
 
     private Integer progressVideos;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CourseEnrollmentEntity> enrollments;
+
     public void updateCourse(UpdateCourseInput input,
                              List<VideoCategoryEntity> videoCategories,
                              List<PrerequisiteEntity> prerequisites,

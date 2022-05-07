@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
+import yoonleeverse.onlinecourseback.modules.course.entity.CourseEnrollmentEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.VideoHistoryEntity;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.user.types.UpdateUserInput;
@@ -57,6 +58,9 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<VideoHistoryEntity> histories;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<CourseEnrollmentEntity> enrollments;
 
     @PrePersist
     void prePersist() {
