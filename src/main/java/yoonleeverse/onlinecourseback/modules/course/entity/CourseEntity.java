@@ -8,6 +8,7 @@ import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
+import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -57,6 +58,9 @@ public class CourseEntity extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<CourseEnrollmentEntity> enrollments;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<PaymentEntity> payments;
 
     public void updateCourse(UpdateCourseInput input,
                              List<VideoCategoryEntity> videoCategories,
