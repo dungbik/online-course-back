@@ -146,14 +146,15 @@ public class PaymentServiceImpl implements PaymentService {
                             user.getUserId(), input.getSlug()))
                     );
 
-            PaymentEntity paymentHistory = paymentRepository.findByUserAndCourse(user, course)
-                    .orElse(null);
+            List<PaymentEntity> paymentHistories = paymentRepository.findByUserAndCourse(user, course);
 
-            if (paymentHistory != null && paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
-                throw new RuntimeException(String.format(
-                        "userId: %s, slug: %s는 결제된 강의입니다.",
-                        user.getUserId(), input.getSlug())
-                );
+            for (PaymentEntity paymentHistory : paymentHistories) {
+                if (paymentHistory.getStatus().equals(PaymentStatus.SUCCESS))
+                    throw new RuntimeException(String.format(
+                            "userId: %s, slug: %s는 결제된 강의입니다.",
+                            user.getUserId(), input.getSlug())
+                    );
+            }
 
             PaymentEntity payment = PaymentEntity.makePayment(user, course, input);
             paymentRepository.save(payment);

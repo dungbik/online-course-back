@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
 
     Optional<PaymentEntity> findByMerchantUid(Long merchantUid);
-    Optional<PaymentEntity> findByUserAndCourse(UserEntity user, CourseEntity course);
+    List<PaymentEntity> findByUserAndCourse(UserEntity user, CourseEntity course);
 
     @EntityGraph(attributePaths = {"course"})
     List<PaymentEntity> findAllByUser(UserEntity user);
