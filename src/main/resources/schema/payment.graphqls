@@ -10,6 +10,12 @@ type PaymentType {
     amount: Int
     status: String
     course: CourseType
+    payMethod: String
+    cardName: String
+    cancelAmount: String
+    receiptUrl: String
+    paidAt: Long
+    embPgProvider: String
 }
 
 input PaymentInput {

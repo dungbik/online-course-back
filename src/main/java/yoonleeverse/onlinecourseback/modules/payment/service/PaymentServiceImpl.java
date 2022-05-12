@@ -108,16 +108,12 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Async
-    public void cancelPayment(Long merchantUid) {
+    public void failPayment(Long merchantUid) {
         try {
             PaymentEntity payment = paymentRepository.findByMerchantUid(merchantUid)
                     .orElseThrow(() -> new RuntimeException(
                             String.format("merchantUid: %ld는 존재하지 않는 거래내역입니다.", merchantUid)));
-            payment.cancel();
-            CourseEnrollmentEntity enrollment = payment.getEnrollment();
-            if (enrollment != null)
-                enrollmentRepository.delete(enrollment);
-
+            payment.fail();
         } catch (Exception e) {
             log.error(e.getMessage());
         }
@@ -156,11 +152,7 @@ public class PaymentServiceImpl implements PaymentService {
                     );
             }
 
-            PaymentEntity payment = PaymentEntity.makePayment(user, course, input);
-            paymentRepository.save(payment);
-
             PaymentsDTO payments = getPayments(input.getImpUid());
-
             if (input.getAmount() != payments.getAmount())
                 throw new RuntimeException(String.format(
                         "userId: %s, slug: %s는 가격이 변조되었습니다.",
@@ -169,12 +161,14 @@ public class PaymentServiceImpl implements PaymentService {
 
             CourseEnrollmentEntity enrollment = CourseEnrollmentEntity.builder()
                     .user(user).course(course).build();
-            enrollmentRepository.save(enrollment);
+
+            PaymentEntity payment = PaymentEntity.makePayment(user, course, enrollment, payments);
+            paymentRepository.save(payment);
 
             successPayment(input.getMerchantUid());
             return ResultType.success();
         } catch (Exception e) {
-            cancelPayment(input.getMerchantUid());
+            failPayment(input.getMerchantUid());
             log.error(e.getMessage());
             return ResultType.fail(e.getMessage());
         }

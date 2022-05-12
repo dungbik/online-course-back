@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEnrollmentEntity;
 import yoonleeverse.onlinecourseback.modules.course.entity.CourseEntity;
-import yoonleeverse.onlinecourseback.modules.payment.types.PaymentInput;
+import yoonleeverse.onlinecourseback.modules.payment.types.PaymentsDTO;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import javax.persistence.*;
@@ -40,11 +40,24 @@ public class PaymentEntity extends BaseTimeEntity {
 
     private Integer amount;
 
-    @OneToOne
+    private String payMethod;
+
+    private String cardName;
+
+    private Integer cancelAmount;
+
+    private String receiptUrl;
+
+    private Long paidAt;
+
+    private String embPgProvider;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "enrollment_id")
     private CourseEnrollmentEntity enrollment;
 
-    public void cancel() {
+    public void fail() {
+        this.enrollment = null;
         this.status = PaymentStatus.FAIL;
     }
 
@@ -52,14 +65,22 @@ public class PaymentEntity extends BaseTimeEntity {
         this.status = PaymentStatus.SUCCESS;
     }
 
-    public static PaymentEntity makePayment(UserEntity user, CourseEntity course, PaymentInput input) {
+    public static PaymentEntity makePayment(UserEntity user, CourseEntity course,
+                                            CourseEnrollmentEntity enrollment, PaymentsDTO payments) {
         return PaymentEntity.builder()
                 .user(user)
                 .course(course)
-                .merchantUid(input.getMerchantUid())
-                .impUid(Long.parseLong(input.getImpUid().substring(4)))
+                .merchantUid(Long.parseLong(payments.getMerchantUid()))
+                .impUid(Long.parseLong(payments.getImpUid().substring(4)))
                 .status(PaymentStatus.PENDING)
-                .amount(input.getAmount())
+                .amount(payments.getAmount())
+                .payMethod(payments.getPayMethod())
+                .cardName(payments.getCardName())
+                .cancelAmount(0)
+                .receiptUrl(payments.getReceiptUrl())
+                .paidAt(payments.getPaidAt())
+                .embPgProvider(payments.getEmbPgProvider())
+                .enrollment(enrollment)
                 .build();
     }
 }
