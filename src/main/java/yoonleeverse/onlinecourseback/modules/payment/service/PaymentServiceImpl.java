@@ -88,10 +88,10 @@ public class PaymentServiceImpl implements PaymentService {
         return accessToken;
     }
 
-    private PaymentsDTO getPayments(String accessToken, String impUid) {
+    public PaymentsDTO getPayments(String impUid) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("Authorization", String.format("Bearer %s", accessToken));
+        headers.add("Authorization", String.format("Bearer %s", getToken()));
         HttpEntity<JSONObject> request = new HttpEntity<>(headers);
 
         try {
@@ -159,8 +159,7 @@ public class PaymentServiceImpl implements PaymentService {
             PaymentEntity payment = PaymentEntity.makePayment(user, course, input);
             paymentRepository.save(payment);
 
-            String accessToken = getToken();
-            PaymentsDTO payments = getPayments(accessToken, input.getImpUid());
+            PaymentsDTO payments = getPayments(input.getImpUid());
 
             if (input.getAmount() != payments.getAmount())
                 throw new RuntimeException(String.format(
