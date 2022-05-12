@@ -31,7 +31,6 @@ public class TechDataFetcher {
     }
 
     @DgsQuery
-    @PreAuthorize("isAuthenticated() && hasRole('ADMIN')")
     public List<TechType> getAllTech() {
         return techService.getAllTech();
     }
