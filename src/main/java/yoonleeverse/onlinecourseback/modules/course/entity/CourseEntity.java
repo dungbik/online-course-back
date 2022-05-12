@@ -1,9 +1,6 @@
 package yoonleeverse.onlinecourseback.modules.course.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import yoonleeverse.onlinecourseback.modules.common.entity.BaseTimeEntity;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
@@ -11,8 +8,8 @@ import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "courses")
@@ -36,7 +33,7 @@ public class CourseEntity extends BaseTimeEntity {
     private FileEntity logo;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<VideoCategoryEntity> videoCategories;
+    private Set<VideoCategoryEntity> videoCategories;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<PrerequisiteEntity> prerequisites;

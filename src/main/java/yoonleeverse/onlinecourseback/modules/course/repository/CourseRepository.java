@@ -15,7 +15,7 @@ public interface CourseRepository extends JpaRepository<CourseEntity, Long> {
 
     Optional<CourseEntity> findBySlug(String slug);
 
-    @Query("SELECT DISTINCT c FROM CourseEntity c " +
+    @Query("SELECT c FROM CourseEntity c " +
             "JOIN FETCH c.videoCategories vc " +
             "JOIN FETCH vc.videos " +
             "WHERE c.slug IN (:slug)")
