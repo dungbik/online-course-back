@@ -85,7 +85,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseType getCourse(String slug) {
-        CourseEntity exCourse = courseRepository.findWithVideosBySlug(slug)
+        CourseEntity exCourse = courseRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 강의입니다."));
 
         CourseType courseDTO = courseMapper.toDTO(exCourse);

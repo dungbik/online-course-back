@@ -4,9 +4,13 @@ spring:
     url: ${DB_URL:jdbc:mariadb://localhost:3306/online_course}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
+
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 1000
 
   mail:
     host: smtp.gmail.com
