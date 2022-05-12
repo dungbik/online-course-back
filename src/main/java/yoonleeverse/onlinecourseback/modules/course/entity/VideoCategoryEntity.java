@@ -26,7 +26,7 @@ public class VideoCategoryEntity extends BaseTimeEntity {
     private CourseEntity course;
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<VideoEntity> videos = new HashSet<>();
+    private List<VideoEntity> videos = new ArrayList<>();
 
     @Column(unique = true, nullable = false)
     private String categoryId;

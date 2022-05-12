@@ -14,7 +14,7 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +33,7 @@ public class CourseMapper {
                 .mainColor(input.getMainColor())
                 .level(LevelEnum.valueOf(input.getLevel()))
                 .price(input.getPrice())
-                .videoCategories(new HashSet<>())
+                .videoCategories(new ArrayList<>())
                 .prerequisites(prerequisites.stream()
                         .map((prerequisite) -> toEntity(prerequisite)).collect(Collectors.toList()))
                 .mainTechs(mainTechs.stream()
@@ -50,7 +50,7 @@ public class CourseMapper {
     public VideoCategoryEntity toEntity(CategoryInput input) {
         return VideoCategoryEntity.builder()
                 .title(input.getTitle())
-                .videos(input.getVideos().stream().map((video) -> toEntity(video)).collect(Collectors.toSet()))
+                .videos(input.getVideos().stream().map((video) -> toEntity(video)).collect(Collectors.toList()))
                 .build();
     }
 

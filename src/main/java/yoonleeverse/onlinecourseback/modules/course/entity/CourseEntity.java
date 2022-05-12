@@ -9,7 +9,6 @@ import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "courses")
@@ -33,7 +32,7 @@ public class CourseEntity extends BaseTimeEntity {
     private FileEntity logo;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<VideoCategoryEntity> videoCategories;
+    private List<VideoCategoryEntity> videoCategories;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<PrerequisiteEntity> prerequisites;
