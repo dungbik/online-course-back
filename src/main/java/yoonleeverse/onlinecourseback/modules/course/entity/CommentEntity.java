@@ -9,7 +9,6 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "comments")
@@ -23,8 +22,6 @@ public class CommentEntity extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String commentId;
-
     private String content;
 
     private String parentId;
@@ -36,11 +33,6 @@ public class CommentEntity extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "video_id")
     private VideoEntity video;
-
-    @PrePersist
-    void prePersist() {
-        this.commentId = UUID.randomUUID().toString();
-    }
 
     public static CommentEntity makeComment(AddCommentInput input) {
         return CommentEntity.builder()

@@ -14,7 +14,7 @@ extend type Mutation {
     removeCourse(slug: String): ResultType
     addComment(input: AddCommentInput): ResultType
     updateComment(input: UpdateCommentInput): ResultType
-    removeComment(commentId: String): ResultType
+    removeComment(id: Long): ResultType
     completeVideo(videoId: Long!): ResultType
     enroll(slug: String): ResultType
 }
@@ -42,7 +42,7 @@ type CourseType {
 }
 
 type VideoCategoryType {
-    categoryId: String
+    id: ID
     title: String
     videos: [VideoType]
 }
@@ -58,7 +58,7 @@ type VideoType {
 }
 
 type CommentType {
-    commentId: String
+    id: ID
     writer: String
     content: String
     parentId: String
@@ -107,6 +107,6 @@ input AddCommentInput {
 }
 
 input UpdateCommentInput {
-    commentId: String
+    id: Long
     content: String
 }

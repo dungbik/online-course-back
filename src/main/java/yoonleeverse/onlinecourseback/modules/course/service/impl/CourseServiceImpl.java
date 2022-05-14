@@ -19,8 +19,6 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInpu
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.file.mapper.FileMapper;
 import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
-import yoonleeverse.onlinecourseback.modules.payment.entity.PaymentEntity;
-import yoonleeverse.onlinecourseback.modules.payment.repository.PaymentRepository;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import java.util.*;
@@ -228,7 +226,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public ResultType updateComment(UpdateCommentInput input) {
         try {
-            CommentEntity exComment = commentRepository.findByCommentId(input.getCommentId())
+            CommentEntity exComment = commentRepository.findById(input.getId())
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 댓글입니다."));
 
             if (exComment.getWriter() != currentUser())
@@ -243,9 +241,9 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public ResultType removeComment(String commentId) {
+    public ResultType removeComment(Long id) {
         try {
-            CommentEntity exComment = commentRepository.findByCommentId(commentId)
+            CommentEntity exComment = commentRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 댓글입니다."));
 
             if (exComment.getWriter() != currentUser())

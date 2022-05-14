@@ -53,8 +53,9 @@ public class UserEntity extends BaseTimeEntity implements UserDetails {
     private FileEntity avatar;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(joinColumns = @JoinColumn(name = "id"))
+    @CollectionTable(joinColumns = @JoinColumn(name = "id"), name = "authorities")
     @Enumerated(EnumType.STRING)
+    @Column(name = "authority")
     private Set<AuthorityEntity> authorities = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)

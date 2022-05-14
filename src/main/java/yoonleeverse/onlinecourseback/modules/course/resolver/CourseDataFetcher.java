@@ -10,7 +10,6 @@ import yoonleeverse.onlinecourseback.modules.course.resolver.dataloaders.Prerequ
 import yoonleeverse.onlinecourseback.modules.course.service.CourseService;
 import yoonleeverse.onlinecourseback.modules.course.types.CommentType;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
-import yoonleeverse.onlinecourseback.modules.course.types.VideoCategoryType;
 import yoonleeverse.onlinecourseback.modules.course.types.VideoType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCommentInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
@@ -86,8 +85,8 @@ public class CourseDataFetcher {
 
     @DgsMutation
     @PreAuthorize("isAuthenticated()")
-    public ResultType removeComment(@InputArgument String commentId) {
-        return courseService.removeComment(commentId);
+    public ResultType removeComment(@InputArgument Long id) {
+        return courseService.removeComment(id);
     }
 
     @DgsMutation

@@ -28,7 +28,7 @@ public class CourseEntity extends BaseTimeEntity {
     private String subTitle;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "file_id")
+    @JoinColumn(name = "logo_id")
     private FileEntity logo;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)

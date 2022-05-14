@@ -30,7 +30,7 @@ public interface CourseService {
 
     ResultType updateComment(UpdateCommentInput input);
 
-    ResultType removeComment(String commentId);
+    ResultType removeComment(Long id);
 
     List<CommentType> getAllComment(Long videoId);
 

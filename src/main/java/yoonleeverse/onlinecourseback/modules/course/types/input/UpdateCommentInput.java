@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class UpdateCommentInput {
 
-    private String commentId;
+    private Long id;
     private String content;
 }

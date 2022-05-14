@@ -28,16 +28,8 @@ public class VideoCategoryEntity extends BaseTimeEntity {
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<VideoEntity> videos = new ArrayList<>();
 
-    @Column(unique = true, nullable = false)
-    private String categoryId;
-
     @Column(nullable = false)
     private String title;
-
-    @PrePersist
-    void prePersist() {
-        this.categoryId = UUID.randomUUID().toString();
-    }
 
     public void setParent(CourseEntity course) {
         this.course = course;

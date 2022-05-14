@@ -119,7 +119,7 @@ public class CourseMapper {
 
     public VideoCategoryType toDTO(VideoCategoryEntity videoCategory) {
         return VideoCategoryType.builder()
-                .categoryId(videoCategory.getCategoryId())
+                .id(videoCategory.getId())
                 .title(videoCategory.getTitle())
                 .videos(videoCategory.getVideos().stream()
                         .map((video) -> toDTO(video))

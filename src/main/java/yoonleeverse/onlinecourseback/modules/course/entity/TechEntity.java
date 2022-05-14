@@ -25,7 +25,7 @@ public class TechEntity extends BaseTimeEntity {
     private String name;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "file_id")
+    @JoinColumn(name = "logo_id")
     private FileEntity logo;
 
     @OneToMany(mappedBy = "tech", cascade = CascadeType.REMOVE, orphanRemoval = true)

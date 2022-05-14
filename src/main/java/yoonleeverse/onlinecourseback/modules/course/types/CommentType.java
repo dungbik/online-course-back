@@ -6,13 +6,13 @@ import yoonleeverse.onlinecourseback.modules.course.entity.CommentEntity;
 @Data
 public class CommentType {
 
-    private String commentId;
+    private Long id;
     private String writer;
     private String content;
     private String parentId;
 
     public CommentType(CommentEntity comment) {
-        this.commentId = comment.getCommentId();
+        this.id = comment.getId();
         this.writer = comment.getWriter().getName();
         this.content = comment.getContent();
         this.parentId = comment.getParentId();
