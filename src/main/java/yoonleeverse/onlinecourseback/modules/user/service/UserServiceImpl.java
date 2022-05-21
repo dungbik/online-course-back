@@ -92,6 +92,8 @@ public class UserServiceImpl implements UserService {
 
             Cookie cookie = new Cookie("x-refresh", jwtProvider.createRefreshToken(user));
             cookie.setHttpOnly(true);
+            cookie.setMaxAge(259200);
+            cookie.setPath("/");
 
             response.addCookie(cookie);
 
