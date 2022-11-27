@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import yoonleeverse.onlinecourseback.modules.common.constants.FileConstants;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.TechEntity;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
@@ -31,7 +32,7 @@ public class TechServiceImpl implements TechService {
     @Transactional(readOnly = true)
     public List<TechType> getAllTech() {
         return techRepository.findAll().stream()
-                .map(courseMapper::toDTO)
+                .map((e) -> courseMapper.toDTO(e))
                 .collect(Collectors.toList());
     }
 
@@ -41,7 +42,7 @@ public class TechServiceImpl implements TechService {
             if (techRepository.existsByName(name))
                 throw new RuntimeException("이미 존재하는 이름입니다.");
 
-            String fileUrl = storageService.put(file, name, "public/tech");
+            String fileUrl = storageService.put(file, name, FileConstants.TECH_PATH);
             FileEntity logo = fileMapper.toEntity(fileUrl);
 
             techRepository.save(courseMapper.toEntity(name, logo));

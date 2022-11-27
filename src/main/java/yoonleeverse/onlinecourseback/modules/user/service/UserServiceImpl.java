@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import yoonleeverse.onlinecourseback.config.AWSConfig;
+import yoonleeverse.onlinecourseback.modules.common.constants.FileConstants;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.file.repository.FileRepository;
@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
     private final EmailService emailService;
     private final FileRepository fileRepository;
     private final StorageService storageService;
-    private final AWSConfig awsConfig;
 
     public UserEntity currentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
@@ -52,7 +51,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public UserType getUser() {
         // todo mapper 클래스 만들어서 관리하는게 좋을듯
-        return new UserType(currentUser(), awsConfig.getFileCloudUrl());
+        return new UserType(currentUser(), "");
     }
 
     @Override
@@ -99,7 +98,7 @@ public class UserServiceImpl implements UserService {
             response.addCookie(cookie);
 
             return SignInResultType.success(
-                    jwtProvider.createAuthToken(user), new UserType(user, awsConfig.getFileCloudUrl()));
+                    jwtProvider.createAuthToken(user), new UserType(user, ""));
         } catch (LockedException e) {
             return SignInResultType.fail("이메일 인증이 완료되지 않았습니다.");
         } catch (Exception e) {
@@ -182,7 +181,7 @@ public class UserServiceImpl implements UserService {
                     .orElseThrow(() -> new RuntimeException("존재하지 않는 회원입니다."));
 
             FileEntity exAvatar = exUser.getAvatar();
-            String fileUrl = storageService.put(file, exUser.getName(), "public/avatar");
+            String fileUrl = storageService.put(file, exUser.getName(), FileConstants.AVATAR_PATH);
 
             if (exAvatar != null) {
                 storageService.delete(exUser.getAvatar().getFileUrl());

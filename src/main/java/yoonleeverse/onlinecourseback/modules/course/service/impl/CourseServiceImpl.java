@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import yoonleeverse.onlinecourseback.modules.common.constants.FileConstants;
 import yoonleeverse.onlinecourseback.modules.common.types.ResultType;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.mapper.CourseMapper;
@@ -18,7 +19,7 @@ import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCommentInp
 import yoonleeverse.onlinecourseback.modules.course.types.input.UpdateCourseInput;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 import yoonleeverse.onlinecourseback.modules.file.mapper.FileMapper;
-import yoonleeverse.onlinecourseback.modules.file.service.StorageService;
+import yoonleeverse.onlinecourseback.modules.file.service.LocalStorageService;
 import yoonleeverse.onlinecourseback.modules.user.entity.UserEntity;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class CourseServiceImpl implements CourseService {
     private final PrerequisiteRepository prerequisiteRepository;
     private final VideoRepository videoRepository;
     private final CommentRepository commentRepository;
-    private final StorageService storageService;
+    private final LocalStorageService storageService;
     private final CourseMapper courseMapper;
     private final FileMapper fileMapper;
     private final VideoHistoryRepository videoHistoryRepository;
@@ -113,7 +114,7 @@ public class CourseServiceImpl implements CourseService {
                 throw new RuntimeException("이미 존재하는 이름입니다.");
 
             if (file != null) {
-                String fileUrl = storageService.put(file, input.getTitle(), "public/course");
+                String fileUrl = storageService.put(file, input.getTitle(), FileConstants.COURSE_PATH);
                 input.setLogo(fileMapper.toEntity(fileUrl));
             }
 
@@ -166,7 +167,7 @@ public class CourseServiceImpl implements CourseService {
                     storageService.delete(oldLogo.getFileUrl());
                 }
 
-                String fileUrl = storageService.put(file, input.getTitle(), "public/course");
+                String fileUrl = storageService.put(file, input.getTitle(), FileConstants.COURSE_PATH);
                 exCourse.getLogo().updateFileUrl(fileUrl);
             }
 

@@ -2,7 +2,6 @@ package yoonleeverse.onlinecourseback.modules.course.mapper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import yoonleeverse.onlinecourseback.config.AWSConfig;
 import yoonleeverse.onlinecourseback.modules.common.utils.StringUtil;
 import yoonleeverse.onlinecourseback.modules.course.entity.*;
 import yoonleeverse.onlinecourseback.modules.course.types.CourseType;
@@ -12,6 +11,7 @@ import yoonleeverse.onlinecourseback.modules.course.types.VideoType;
 import yoonleeverse.onlinecourseback.modules.course.types.input.AddCourseInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.CategoryInput;
 import yoonleeverse.onlinecourseback.modules.course.types.input.VideoInput;
+import yoonleeverse.onlinecourseback.modules.file.component.FileComponent;
 import yoonleeverse.onlinecourseback.modules.file.entity.FileEntity;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CourseMapper {
 
-    private final AWSConfig awsConfig;
+    private final FileComponent fileComponent;
 
     public CourseEntity toEntity(AddCourseInput input, List<CourseEntity> prerequisites, List<TechEntity> mainTechs) {
         CourseEntity course = CourseEntity.builder()
@@ -86,7 +86,7 @@ public class CourseMapper {
     public TechType toDTO(TechEntity tech) {
         String logo = null;
         if (tech.getLogo() != null) {
-            logo = String.format("%s/%s", awsConfig.getFileCloudUrl(), tech.getLogo().getFileUrl());
+            logo = fileComponent.getFileUrl(tech.getLogo().getFileUrl());
         }
 
         return TechType.builder()
@@ -97,7 +97,7 @@ public class CourseMapper {
     public CourseType toDTO(CourseEntity course) {
         String logo = null;
         if (course.getLogo() != null) {
-            logo = String.format("%s/%s", awsConfig.getFileCloudUrl(), course.getLogo().getFileUrl());
+            logo = fileComponent.getFileUrl(course.getLogo().getFileUrl());
         }
 
         return CourseType.builder()

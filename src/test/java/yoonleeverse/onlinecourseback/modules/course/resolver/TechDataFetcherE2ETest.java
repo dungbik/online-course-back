@@ -60,6 +60,7 @@ class TechDataFetcherE2ETest {
 
         List<TechType> result = dgsQueryExecutor.executeAndExtractJsonPathAsObject(
                 graphQLQueryRequest.serialize(), "data.getAllTech[*]", new TypeRef<List<TechType>>() { });
+        System.out.println(result);
         assertThat(result.size()).isEqualTo(1);
 
         TechType firstElem = result.get(0);

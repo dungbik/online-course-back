@@ -3,6 +3,7 @@ package yoonleeverse.onlinecourseback.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import yoonleeverse.onlinecourseback.modules.common.constants.FileConstants;
 import yoonleeverse.onlinecourseback.security.JWTFilter;
 
 import java.util.List;
@@ -39,6 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                     .antMatchers("/graphql/**", "/graphiql/**").permitAll()
+                    .mvcMatchers(HttpMethod.GET, FileConstants.IMAGE_ENDPOINT).permitAll()
 //                    .requestMatchers(PathRequest.toH2Console()).permitAll()
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
